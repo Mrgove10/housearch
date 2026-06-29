@@ -1,5 +1,4 @@
 'use strict';
-const { request } = require('undici');
 const fs = require('node:fs');
 const path = require('node:path');
 const { db, DATA_DIR } = require('../db');
@@ -28,20 +27,19 @@ async function downloadImages(houseId, urls, referer) {
 
   for (const url of list) {
     try {
-      const res = await request(url, {
+      const res = await fetch(url, {
         headers: {
           'User-Agent': UA,
           'Accept': 'image/avif,image/webp,image/png,image/*,*/*;q=0.8',
           ...(referer ? { Referer: referer } : {}),
         },
-        maxRedirections: 4,
-        headersTimeout: 15000,
-        bodyTimeout: 20000,
+        redirect: 'follow',
+        signal: AbortSignal.timeout(20000),
       });
-      if (res.statusCode >= 400) { skipped++; warn('[photos]', `  ${res.statusCode} ${url}`); try { await res.body.dump(); } catch {} continue; }
-      const ct = (res.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
-      if (!ct.startsWith('image/')) { skipped++; try { await res.body.dump(); } catch {} continue; }
-      const buf = Buffer.from(await res.body.arrayBuffer());
+      if (res.status >= 400) { skipped++; warn('[photos]', `  ${res.status} ${url}`); continue; }
+      const ct = (res.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+      if (!ct.startsWith('image/')) { skipped++; continue; }
+      const buf = Buffer.from(await res.arrayBuffer());
       if (buf.length < MIN_BYTES || buf.length > MAX_BYTES) { skipped++; continue; }
       const name = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + (EXT[ct] || '.jpg');
       fs.writeFileSync(path.join(dir, name), buf);

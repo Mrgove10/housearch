@@ -8,20 +8,27 @@
       <input name="q" value="<%= q %>" placeholder="Search address, title...">
     </form>
 
-    <div class="row" style="margin-bottom:14px">
-      <a class="btn secondary<%= filter==='all'?' ':'' %>" href="/houses">All <%= counts.all %></a>
-      <a class="btn secondary" href="/houses?filter=visited">Visited <%= counts.visited %></a>
-      <a class="btn secondary" href="/houses?filter=offered">Offered <%= counts.offered %></a>
+    <div class="row" style="margin-bottom:14px;align-items:center">
+      <a class="btn <%= filter==='all'?'':'secondary' %>" href="/houses">All <%= counts.all %></a>
+      <a class="btn <%= filter==='visited'?'':'secondary' %>" href="/houses?filter=visited">Visited <%= counts.visited %></a>
+      <a class="btn <%= filter==='offered'?'':'secondary' %>" href="/houses?filter=offered">Offered <%= counts.offered %></a>
+      <a class="btn ghost" href="/houses?filter=archived" title="Archived" style="flex:0 0 auto;<%= filter==='archived'?'color:var(--accent);font-weight:700':'' %>">
+        🗄 <%= counts.archived %>
+      </a>
     </div>
 
     <% if (!houses.length) { %>
-      <div class="empty"><div class="big">🏠</div>No houses yet.<br><a href="/add" class="btn mt">Add your first</a></div>
+      <% if (filter === 'archived') { %>
+        <div class="empty"><div class="big">🗄</div>No archived houses.</div>
+      <% } else { %>
+        <div class="empty"><div class="big">🏠</div>No houses yet.<br><a href="/add" class="btn mt">Add your first</a></div>
+      <% } %>
     <% } else { %>
     <div class="house-grid">
     <% houses.forEach(function(h){ %>
       <a href="/houses/<%= h.id %>" style="color:inherit">
         <article class="house">
-          <div class="thumb"<%= h.thumb ? ' style="background-image:url(\'' + h.thumb + '\')"' : '' %>></div>
+          <div class="thumb"<%- h.thumb ? ' style="background-image:url(\'' + h.thumb + '\')"' : '' %>></div>
           <div>
             <h3><%= h.title %></h3>
             <div class="meta">

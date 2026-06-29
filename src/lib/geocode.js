@@ -1,5 +1,4 @@
 'use strict';
-const { request } = require('undici');
 const { db } = require('../db');
 const { log } = require('./log');
 
@@ -27,9 +26,9 @@ async function geocode(query) {
 
   try {
     const url = 'https://api-adresse.data.gouv.fr/search/?limit=1&q=' + encodeURIComponent(q);
-    const res = await request(url, { headers: { 'User-Agent': 'Housearch/1.0' } });
-    if (res.statusCode >= 400) throw new Error('BAN HTTP ' + res.statusCode);
-    const data = await res.body.json();
+    const res = await fetch(url, { headers: { 'User-Agent': 'Housearch/1.0' }, signal: AbortSignal.timeout(10000) });
+    if (res.status >= 400) throw new Error('BAN HTTP ' + res.status);
+    const data = await res.json();
     const feat = data && Array.isArray(data.features) && data.features[0];
     if (feat && feat.geometry && Array.isArray(feat.geometry.coordinates)) {
       const [lng, lat] = feat.geometry.coordinates; // BAN/GeoJSON order: [lon, lat]

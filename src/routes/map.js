@@ -7,11 +7,9 @@ const router = express.Router();
 router.get('/map', (req, res) => {
   res.render('map', {
     title: 'Map', active: 'map',
-    center: {
-      lat: parseFloat(getSetting('map_center_lat', '47.2184')),
-      lng: parseFloat(getSetting('map_center_lng', '-1.5536')),
-      zoom: parseFloat(getSetting('map_zoom', '12')),
-    },
+    // Fallback view (only used when there are no houses to fit). The map otherwise
+    // auto-fits to all markers.
+    center: { lat: 46.6, lng: 2.4, zoom: 5 },
     maptilerKey: getSetting('maptiler_key', '') || process.env.MAPTILER_KEY || '',
   });
 });

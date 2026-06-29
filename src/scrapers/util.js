@@ -1,5 +1,4 @@
 'use strict';
-const { request } = require('undici');
 const cheerio = require('cheerio');
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
@@ -15,26 +14,25 @@ const STATUS_HINT = {
 async function fetchHtml(url) {
   let res;
   try {
-    res = await request(url, {
+    res = await fetch(url, {
       headers: {
         'User-Agent': UA,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
       },
-      maxRedirections: 5,
-      headersTimeout: 15000,
-      bodyTimeout: 15000,
+      redirect: 'follow',
+      signal: AbortSignal.timeout(15000),
     });
   } catch (e) {
     // network-level failure (DNS, TLS, timeout, connection refused…)
-    const cause = e.cause && e.cause.code ? ' (' + e.cause.code + ')' : (e.code ? ' (' + e.code + ')' : '');
+    const cause = e.cause && e.cause.code ? ' (' + e.cause.code + ')' : (e.name === 'TimeoutError' ? ' (timeout)' : '');
     throw new Error('network error' + cause + ': ' + e.message);
   }
-  if (res.statusCode >= 400) {
-    const hint = STATUS_HINT[res.statusCode] ? ' — ' + STATUS_HINT[res.statusCode] : '';
-    throw new Error('HTTP ' + res.statusCode + hint);
+  if (res.status >= 400) {
+    const hint = STATUS_HINT[res.status] ? ' — ' + STATUS_HINT[res.status] : '';
+    throw new Error('HTTP ' + res.status + hint);
   }
-  return await res.body.text();
+  return await res.text();
 }
 
 function num(v) {

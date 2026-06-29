@@ -45,23 +45,14 @@
       </form>
     </div>
 
-    <!-- Default map location -->
-    <div id="map" class="section-h"><h2>Default map location</h2></div>
+    <!-- Map tiles -->
+    <div id="map" class="section-h"><h2>Map tiles</h2></div>
     <div class="card">
+      <p class="muted" style="margin-top:0">The map auto-fits to show all your houses.</p>
       <form method="post" action="/settings/map">
-        <label>Center address or coordinates</label>
-        <input name="center" placeholder="Nantes, France  ·  or  47.2184, -1.5536">
-        <div class="row" style="margin-top:10px">
-          <div style="flex:1"><label>Latitude</label><input id="s-lat" type="number" step="any" name="lat" value="<%= map.lat %>"></div>
-          <div style="flex:1"><label>Longitude</label><input id="s-lng" type="number" step="any" name="lng" value="<%= map.lng %>"></div>
-          <div style="flex:1"><label>Zoom</label><input type="number" min="1" max="20" name="zoom" value="<%= map.zoom %>"></div>
-        </div>
-        <label class="mt">MapTiler key (optional, nicer tiles)</label>
+        <label>MapTiler key (optional, nicer tiles)</label>
         <input name="maptiler_key" value="<%= maptilerKey %>" placeholder="leave blank for OSM raster">
-        <div class="row" style="margin-top:10px">
-          <button type="button" class="btn secondary block" data-geolocate data-lat="#s-lat" data-lng="#s-lng">Use my current location</button>
-          <button class="btn block">Save</button>
-        </div>
+        <button class="btn block mt">Save</button>
       </form>
     </div>
 

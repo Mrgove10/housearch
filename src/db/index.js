@@ -22,12 +22,17 @@ function setSetting(key, value) {
   ).run(key, String(value));
 }
 
+// Create a checklist template with items if no template of that name exists yet.
+function ensureTemplate(name, items) {
+  const existing = db.prepare('SELECT id FROM checklist_template WHERE name = ?').get(name);
+  if (existing) return;
+  const tid = db.prepare('INSERT INTO checklist_template (name) VALUES (?)').run(name).lastInsertRowid;
+  const ins = db.prepare('INSERT INTO checklist_item (template_id, label, kind, sort) VALUES (?,?,?,?)');
+  items.forEach(([l, k], i) => ins.run(tid, l, k, i));
+}
+
 // Defaults
 function seedDefaults() {
-  if (getSetting('map_center_lat') == null) setSetting('map_center_lat', '47.2184');
-  if (getSetting('map_center_lng') == null) setSetting('map_center_lng', '-1.5536');
-  if (getSetting('map_zoom') == null) setSetting('map_zoom', '12');
-
   // Seed a starter checklist template + score criteria once
   const haveTpl = db.prepare('SELECT COUNT(*) c FROM checklist_template').get().c;
   if (!haveTpl) {
@@ -43,6 +48,21 @@ function seedDefaults() {
     const ins = db.prepare('INSERT INTO checklist_item (template_id, label, kind, sort) VALUES (?,?,?,?)');
     items.forEach(([l, k], i) => ins.run(tid, l, k, i));
   }
+  // Ensure the French house-inspection template exists (added by name, so it
+  // appears on existing installs too without duplicating).
+  ensureTemplate('Inspection maison', [
+    ['Le bruit', 'question'],
+    ["L'orientation", 'check'],
+    ['Les fissures', 'question'],
+    ['La toiture', 'question'],
+    ["L'humidité", 'question'],
+    ['Électricité', 'question'],
+    ['DPE', 'check'],
+    ['Ventilation', 'question'],
+    ['Charpente', 'question'],
+    ["L'isolation", 'question'],
+  ]);
+
   const haveScore = db.prepare('SELECT COUNT(*) c FROM score_template_item').get().c;
   if (!haveScore) {
     const ins = db.prepare('INSERT INTO score_template_item (label, weight, sign, sort) VALUES (?,?,?,?)');

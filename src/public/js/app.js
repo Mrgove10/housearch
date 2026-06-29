@@ -1,6 +1,76 @@
 'use strict';
 // Housearch shared client JS — vanilla, progressive enhancement.
 
+// ---- Lightbox carousel for photo galleries ----
+(function () {
+  let box, imgEl, countEl, items = [], idx = 0;
+
+  function build() {
+    box = document.createElement('div');
+    box.className = 'lightbox';
+    box.innerHTML =
+      '<button class="lb-btn lb-close" aria-label="Close">✕</button>' +
+      '<button class="lb-btn lb-prev" aria-label="Previous">‹</button>' +
+      '<img alt="">' +
+      '<button class="lb-btn lb-next" aria-label="Next">›</button>' +
+      '<div class="lb-count"></div>';
+    document.body.appendChild(box);
+    imgEl = box.querySelector('img');
+    countEl = box.querySelector('.lb-count');
+    box.querySelector('.lb-close').addEventListener('click', close);
+    box.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+    box.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+    box.addEventListener('click', (e) => { if (e.target === box) close(); });
+    // swipe
+    let sx = 0;
+    box.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    });
+  }
+
+  function show() {
+    imgEl.src = items[idx];
+    countEl.textContent = (idx + 1) + ' / ' + items.length;
+    countEl.style.display = items.length > 1 ? '' : 'none';
+    box.querySelector('.lb-prev').style.display = items.length > 1 ? '' : 'none';
+    box.querySelector('.lb-next').style.display = items.length > 1 ? '' : 'none';
+  }
+  function step(d) { idx = (idx + d + items.length) % items.length; show(); }
+  function open(list, start) {
+    if (!box) build();
+    items = list; idx = start;
+    show();
+    box.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    box.classList.remove('open');
+    document.body.style.overflow = '';
+    imgEl.src = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('.photos a, a.ph');
+    if (!a || !a.getAttribute('href')) return;
+    const gallery = a.closest('.photos') || document;
+    const links = [...gallery.querySelectorAll('a.ph, a[href^="/photos/"]')];
+    const urls = links.map((l) => l.getAttribute('href'));
+    const start = Math.max(0, links.indexOf(a));
+    if (!urls.length) return;
+    e.preventDefault();
+    open(urls, start);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!box || !box.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  });
+})();
+
 // ---- Segmented yes/no/? controls (auto-POST) ----
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.segmented button');
