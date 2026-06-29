@@ -1,0 +1,86 @@
+<% var p = prefill || {}; var isEdit = !!(p && p.id); %>
+<%- include('partials/head', { title: isEdit ? 'Edit house' : 'Add house' }) %>
+  <header class="appbar">
+    <a href="<%= isEdit ? '/houses/' + p.id : '/houses' %>" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1><%= isEdit ? 'Edit house' : 'Add house' %></h1>
+  </header>
+
+  <main>
+    <% if (typeof error !== 'undefined' && error) { %><div class="flash err"><%= error %></div><% } %>
+    <% if (typeof imported !== 'undefined' && imported) { %><div class="flash ok">Imported — review and save.</div><% } %>
+
+    <% if (!isEdit) { %>
+    <div class="card">
+      <label>Paste listing URL</label>
+      <form method="post" action="/import">
+        <input id="import-url" name="url" placeholder="https://www.seloger.com/annonces/..." value="<%= p.source_url || '' %>">
+        <div class="row" style="margin-top:10px">
+          <button type="button" class="btn secondary block" data-paste-into="#import-url">Paste from clipboard</button>
+          <button class="btn block">Import</button>
+        </div>
+      </form>
+      <div class="tags" style="margin-top:10px">
+        <span class="tag">SeLoger</span><span class="tag">LeBonCoin</span><span class="tag">Bien'ici</span>
+        <span class="tag">Logic-Immo</span><span class="tag">PAP</span><span class="tag">Jinka</span>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Or paste saved HTML</h2></div>
+    <div class="card">
+      <form method="post" action="/import">
+        <textarea name="html" placeholder="Paste the page source if the site blocks the scraper" style="min-height:90px"></textarea>
+        <button class="btn secondary block mt">Import from HTML</button>
+      </form>
+    </div>
+
+    <%
+      // Bookmarklet: from an open listing tab, send that tab's rendered HTML here.
+      var bm = "javascript:(function(){var o='" + appOrigin + "/import';var f=document.createElement('form');f.method='POST';f.action=o;f.target='_blank';function a(n,v){var i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;f.appendChild(i);}a('url',location.href);a('html','<!DOCTYPE html>'+document.documentElement.outerHTML);document.body.appendChild(f);f.submit();f.remove();})();";
+    %>
+    <div class="section-h"><h2>One-click from your browser</h2></div>
+    <div class="card">
+      <p class="muted" style="margin-top:0">
+        Drag this button to your bookmarks bar. Then, on any open listing tab, click it —
+        Housearch grabs that page's fully-rendered HTML (already past the anti-bot wall) and
+        opens this Add form pre-filled.
+      </p>
+      <p><a href="<%- bm %>" class="btn" onclick="return false" draggable="true">📋 Send to Housearch</a></p>
+      <p class="muted" style="font-size:13px">
+        Tip: if the listing is on <code>https://</code> and Housearch on <code>http://</code>,
+        your browser may show a one-time “insecure form” prompt — allow it. Works for any property site.
+      </p>
+    </div>
+    <% } %>
+
+    <div class="section-h"><h2><%= isEdit ? 'Details' : 'Or enter manually' %></h2></div>
+    <div class="card">
+      <form method="post" action="<%= isEdit ? '/houses/' + p.id : '/houses' %>">
+        <div class="form-grid">
+          <div class="full"><label>Title</label><input name="title" value="<%= p.title || '' %>" placeholder="e.g. Maison de ville 4P"></div>
+          <div class="full"><label>Address</label><input name="address" value="<%= p.address || '' %>" placeholder="Street, postcode, city"></div>
+          <div><label>Price (€)</label><input type="number" name="price" value="<%= p.price || '' %>" placeholder="389000"></div>
+          <div><label>Surface (m²)</label><input type="number" step="any" name="surface_m2" value="<%= p.surface_m2 || '' %>" placeholder="120"></div>
+          <div><label>Rooms</label><input type="number" name="rooms" value="<%= p.rooms || '' %>" placeholder="5"></div>
+          <div><label>Bedrooms</label><input type="number" name="bedrooms" value="<%= p.bedrooms || '' %>" placeholder="3"></div>
+          <div><label>Year built</label><input type="number" name="year_built" value="<%= p.year_built || '' %>" placeholder="1923"></div>
+          <div><label>DPE</label><input name="dpe" value="<%= p.dpe || '' %>" placeholder="D" maxlength="2"></div>
+          <div><label>Lot (m²)</label><input type="number" step="any" name="lot_m2" value="<%= p.lot_m2 || '' %>" placeholder="340"></div>
+          <div><label>Latitude</label><input type="number" step="any" name="lat" value="<%= p.lat || '' %>" placeholder="auto from address"></div>
+          <div><label>Longitude</label><input type="number" step="any" name="lng" value="<%= p.lng || '' %>" placeholder="auto from address"></div>
+          <div class="full"><label>Source URL</label><input name="source_url" value="<%= p.source_url || '' %>" placeholder="https://..."></div>
+          <input type="hidden" name="source_site" value="<%= p.source_site || '' %>">
+          <% if (p.raw_json) { %><input type="hidden" name="raw_json" value="<%= p.raw_json %>"><% } %>
+          <% if (!isEdit && p.images && p.images.length) { %>
+            <input type="hidden" name="image_urls" value="<%= JSON.stringify(p.images) %>">
+            <div class="full"><p class="muted" style="margin:6px 0 0">📷 <%= p.images.length %> photo<%= p.images.length>1?'s':'' %> found — they'll be downloaded when you create the house.</p></div>
+          <% } %>
+        </div>
+        <button class="btn block mt"><%= isEdit ? 'Save changes' : 'Create house' %></button>
+      </form>
+    </div>
+  </main>
+
+  <%- include('partials/nav', { active: isEdit ? 'list' : 'add' }) %>
+<%- include('partials/foot') %>

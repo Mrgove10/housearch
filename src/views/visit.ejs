@@ -1,0 +1,100 @@
+<%- include('partials/head', { title: 'Visit — ' + (house.title || '') }) %>
+  <header class="appbar">
+    <a href="/houses/<%= house.id %>" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1>Visit</h1>
+    <span class="tag <%= visit.done_at ? '' : 'accent' %>"><%= visit.done_at ? 'Done' : 'In progress' %></span>
+  </header>
+
+  <main>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600"><%= house.title %></div>
+          <div class="muted" style="font-size:13px"><%= house.address || '' %><%= visit.scheduled_at ? ' · ' + visit.scheduled_at : '' %></div>
+        </div>
+        <% if (!visit.done_at) { %>
+        <form method="post" action="/visits/<%= visit.id %>/finish" class="inline-form" id="endform">
+          <button class="btn secondary" style="min-height:40px">End visit</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="section-h"><h2>Photos</h2><span class="muted" style="font-size:13px"><%= photos.length %> uploaded</span></div>
+    <div class="dropzone" data-upload-url="/api/visits/<%= visit.id %>/photos" data-preview-list="#visit-upload">
+      <strong>Drag &amp; drop images here</strong>
+      <div>or <label for="vpick" style="color:var(--accent);text-decoration:underline;cursor:pointer">browse</label> · paste from clipboard</div>
+      <input id="vpick" type="file" accept="image/*" multiple capture hidden>
+    </div>
+    <div id="visit-upload" class="upload-list"></div>
+    <% if (photos.length) { %>
+    <div class="photos mt">
+      <% photos.forEach(function(ph){ %><a class="ph" href="/photos/<%= ph.path %>" target="_blank" style="background-image:url('/photos/<%= ph.path %>')"></a><% }) %>
+    </div>
+    <% } %>
+
+    <!-- Checklist -->
+    <div class="section-h"><h2>Checklist</h2>
+      <form method="post" action="/visits/<%= visit.id %>/template" class="inline-form">
+        <select name="template_id" onchange="this.form.submit()" style="min-height:36px;width:auto">
+          <% templates.forEach(function(t){ %><option value="<%= t.id %>"<%= visit.template_id===t.id?' selected':'' %>><%= t.name %></option><% }) %>
+        </select>
+      </form>
+    </div>
+    <div class="card">
+      <% if (!items.length) { %><p class="muted">No checklist items. Add some in Settings.</p><% } %>
+      <div class="checklist">
+        <% items.forEach(function(it){ var v = resp.get(it.id); %>
+          <div class="item">
+            <span><%= it.label %></span>
+            <% if (it.kind === 'question') { %>
+              <div class="segmented" data-url="/api/visits/<%= visit.id %>/responses/<%= it.id %>">
+                <button data-value="yes"<%= v==='yes'?' class="active"':'' %>>Yes</button>
+                <button data-value="no"<%= v==='no'?' class="active"':'' %>>No</button>
+                <button data-value="?"<%= v==='?'?' class="active"':'' %>>?</button>
+              </div>
+            <% } else { %>
+              <input style="width:140px" placeholder="value" value="<%= v || '' %>" data-response-url="/api/visits/<%= visit.id %>/responses/<%= it.id %>">
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="section-h"><h2>Notes</h2></div>
+    <div class="card">
+      <form method="post" action="/houses/<%= house.id %>/notes">
+        <input type="hidden" name="visit_id" value="<%= visit.id %>">
+        <textarea name="body" placeholder="Type notes as you walk through…"></textarea>
+        <button class="btn block mt">Add note</button>
+      </form>
+      <% notes.forEach(function(n){ %>
+        <div style="border-top:1px solid var(--border);padding:10px 0">
+          <div class="muted" style="font-size:12px"><%= n.created_at %></div>
+          <div><%= n.body %></div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Summary -->
+    <div class="section-h"><h2>Summary &amp; finish</h2></div>
+    <div class="card">
+      <form method="post" action="/visits/<%= visit.id %>/save">
+        <label>Overall impression</label>
+        <textarea name="summary" placeholder="One-liner verdict…"><%= visit.summary || '' %></textarea>
+        <button class="btn secondary block mt">Save draft</button>
+      </form>
+      <% if (!visit.done_at) { %>
+      <form method="post" action="/visits/<%= visit.id %>/finish" class="mt">
+        <button class="btn block">Finish visit</button>
+      </form>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('partials/nav', { active: 'list' }) %>
+<%- include('partials/foot') %>

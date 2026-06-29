@@ -1,0 +1,64 @@
+<%
+var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">' +
+                '<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>';
+%>
+<%- include('partials/head', { title: 'Housearch — Map', headExtra: headExtra }) %>
+  <header class="appbar"><h1>Map</h1></header>
+
+  <div class="map-wrap">
+    <div class="map-canvas" id="map"></div>
+  </div>
+
+  <%- include('partials/nav', { active: 'map' }) %>
+
+  <script>
+    const CENTER = [<%= center.lng %>, <%= center.lat %>];
+    const ZOOM = <%= center.zoom %>;
+    const MAPTILER = <%- JSON.stringify(maptilerKey || '') %>;
+
+    const rasterStyle = {
+      version: 8,
+      sources: { osm: { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, attribution: '© OpenStreetMap' } },
+      layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+    };
+    const style = MAPTILER
+      ? 'https://api.maptiler.com/maps/streets-v2/style.json?key=' + MAPTILER
+      : rasterStyle;
+
+    const map = new maplibregl.Map({ container: 'map', style, center: CENTER, zoom: ZOOM });
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+    function pinClass(s){ return s > 0 ? 'good' : s < 0 ? 'bad' : ''; }
+    function pinLabel(s){ return (s>0?'+':s<0?'−':'') + Math.abs(s); }
+
+    fetch('/api/houses.geojson').then(r => r.json()).then(geo => {
+      const focus = new URLSearchParams(location.search).get('focus');
+      let focusLngLat = null;
+      geo.features.forEach(f => {
+        const el = document.createElement('div');
+        el.className = 'pin ' + pinClass(f.properties.score);
+        el.textContent = pinLabel(f.properties.score);
+        const p = f.properties;
+        const html =
+          '<a href="/houses/' + p.id + '" style="color:inherit;text-decoration:none">' +
+          '<div class="drawer" style="position:static;width:300px">' +
+          '<div class="thumb"' + (p.thumb ? ' style="background-image:url(\'' + p.thumb + '\')"' : '') + '></div>' +
+          '<div><div style="font-weight:600">' + (p.title||'') + '</div>' +
+          '<div style="font-size:13px;color:var(--muted)">' + [p.surface?p.surface+' m²':'', p.address||''].filter(Boolean).join(' · ') + '</div></div>' +
+          '<div class="score ' + pinClass(p.score) + '">' + pinLabel(p.score) + '</div>' +
+          '</div></a>';
+        new maplibregl.Marker({ element: el })
+          .setLngLat(f.geometry.coordinates)
+          .setPopup(new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(html))
+          .addTo(map);
+        if (focus && String(p.id) === String(focus)) focusLngLat = f.geometry.coordinates;
+      });
+      if (focusLngLat) map.flyTo({ center: focusLngLat, zoom: 15 });
+      else if (geo.features.length && !focus) {
+        const b = new maplibregl.LngLatBounds();
+        geo.features.forEach(f => b.extend(f.geometry.coordinates));
+        map.fitBounds(b, { padding: 60, maxZoom: 14 });
+      }
+    });
+  </script>
+<%- include('partials/foot') %>

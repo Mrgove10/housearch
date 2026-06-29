@@ -1,0 +1,7 @@
+<%- include('partials/head', { title: title }) %>
+  <header class="appbar"><h1><%= title %></h1></header>
+  <main>
+    <div class="card"><p><%= message %></p><a href="/houses" class="btn secondary mt">Back to houses</a></div>
+  </main>
+  <%- include('partials/nav', { active: active }) %>
+<%- include('partials/foot') %>

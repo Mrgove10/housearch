@@ -1,0 +1,79 @@
+<%- include('partials/head', { title: 'Settings — Housearch' }) %>
+  <header class="appbar"><h1>Settings</h1></header>
+
+  <main>
+    <% if (flash) { %><div class="flash ok"><%= flash %></div><% } %>
+
+    <!-- Checklist templates -->
+    <div id="checklist" class="section-h"><h2>Checklist templates</h2></div>
+    <div class="card">
+      <div class="checklist">
+        <% templates.forEach(function(t){ %>
+          <div class="item">
+            <a href="/settings/checklist/<%= t.id %>" style="color:inherit"><%= t.name %> <span class="muted">(<%= t.n %> items)</span></a>
+            <form method="post" action="/checklist/templates/<%= t.id %>/delete" class="inline-form"><button class="btn ghost" style="min-height:auto;padding:0 6px">✕</button></form>
+          </div>
+        <% }) %>
+      </div>
+      <form method="post" action="/checklist/templates" class="row mt">
+        <input name="name" placeholder="New template name" style="flex:2">
+        <button class="btn">Add</button>
+      </form>
+    </div>
+
+    <!-- Score criteria -->
+    <div id="score" class="section-h"><h2>Score criteria</h2></div>
+    <div class="card">
+      <div class="checklist">
+        <% scoreItems.forEach(function(s){ %>
+          <div class="item">
+            <span><%= s.label %></span>
+            <span style="display:flex;gap:8px;align-items:center">
+              <span class="tag accent">weight <%= s.weight %> · <%= s.sign>0?'+':'−' %></span>
+              <form method="post" action="/score/template/<%= s.id %>/delete" class="inline-form"><button class="btn ghost" style="min-height:auto;padding:0 6px">✕</button></form>
+            </span>
+          </div>
+        <% }) %>
+      </div>
+      <form method="post" action="/score/template" class="mt">
+        <div class="row">
+          <input name="label" placeholder="Criterion" style="flex:2">
+          <input type="number" name="weight" placeholder="weight" value="1" min="1" style="flex:1">
+          <select name="sign" style="flex:1"><option value="1">Bonus +</option><option value="-1">Malus −</option></select>
+          <button class="btn">Add</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Default map location -->
+    <div id="map" class="section-h"><h2>Default map location</h2></div>
+    <div class="card">
+      <form method="post" action="/settings/map">
+        <label>Center address or coordinates</label>
+        <input name="center" placeholder="Nantes, France  ·  or  47.2184, -1.5536">
+        <div class="row" style="margin-top:10px">
+          <div style="flex:1"><label>Latitude</label><input id="s-lat" type="number" step="any" name="lat" value="<%= map.lat %>"></div>
+          <div style="flex:1"><label>Longitude</label><input id="s-lng" type="number" step="any" name="lng" value="<%= map.lng %>"></div>
+          <div style="flex:1"><label>Zoom</label><input type="number" min="1" max="20" name="zoom" value="<%= map.zoom %>"></div>
+        </div>
+        <label class="mt">MapTiler key (optional, nicer tiles)</label>
+        <input name="maptiler_key" value="<%= maptilerKey %>" placeholder="leave blank for OSM raster">
+        <div class="row" style="margin-top:10px">
+          <button type="button" class="btn secondary block" data-geolocate data-lat="#s-lat" data-lng="#s-lng">Use my current location</button>
+          <button class="btn block">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Data -->
+    <div class="section-h"><h2>Data</h2></div>
+    <div class="card">
+      <a href="/settings/export" class="btn secondary block">Export backup (.sqlite)</a>
+      <div class="muted" style="font-size:13px;margin-top:10px"><%= stats.houses %> houses · <%= stats.archived %> archived · <%= stats.photos %> photos</div>
+    </div>
+
+    <div style="height:24px"></div>
+  </main>
+
+  <%- include('partials/nav', { active: 'settings' }) %>
+<%- include('partials/foot') %>

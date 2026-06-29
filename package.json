@@ -1,0 +1,17 @@
+{
+  "name": "housearch",
+  "version": "1.0.0",
+  "description": "Self-hosted house-hunting tracker: import listings, map, timeline, visits, photos, checklists, scoring.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "multer": "^2.2.0",
+    "undici": "^7.3.0"
+  }
+}

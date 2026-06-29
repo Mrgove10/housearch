@@ -1,0 +1,34 @@
+<%- include('partials/head', { title: 'Edit template — ' + tpl.name }) %>
+  <header class="appbar">
+    <a href="/settings" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1><%= tpl.name %></h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="checklist">
+        <% if (!items.length) { %><p class="muted">No items yet.</p><% } %>
+        <% items.forEach(function(it){ %>
+          <div class="item">
+            <span><%= it.label %></span>
+            <span style="display:flex;gap:8px;align-items:center">
+              <span class="tag"><%= it.kind === 'check' ? 'number/text' : 'yes/no/?' %></span>
+              <form method="post" action="/checklist/items/<%= it.id %>/delete" class="inline-form"><button class="btn ghost" style="min-height:auto;padding:0 6px">✕</button></form>
+            </span>
+          </div>
+        <% }) %>
+      </div>
+      <form method="post" action="/checklist/templates/<%= tpl.id %>/items" class="mt">
+        <div class="row">
+          <input name="label" placeholder="New item label" style="flex:2">
+          <select name="kind" style="flex:1"><option value="question">yes/no/?</option><option value="check">number/text</option></select>
+          <button class="btn">Add</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <%- include('partials/nav', { active: 'settings' }) %>
+<%- include('partials/foot') %>

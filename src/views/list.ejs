@@ -1,0 +1,48 @@
+<%- include('partials/head', { title: 'Housearch — Houses' }) %>
+  <header class="appbar">
+    <h1>Houses</h1>
+  </header>
+
+  <main>
+    <form method="get" action="/houses" style="margin-bottom:12px">
+      <input name="q" value="<%= q %>" placeholder="Search address, title...">
+    </form>
+
+    <div class="row" style="margin-bottom:14px">
+      <a class="btn secondary<%= filter==='all'?' ':'' %>" href="/houses">All <%= counts.all %></a>
+      <a class="btn secondary" href="/houses?filter=visited">Visited <%= counts.visited %></a>
+      <a class="btn secondary" href="/houses?filter=offered">Offered <%= counts.offered %></a>
+    </div>
+
+    <% if (!houses.length) { %>
+      <div class="empty"><div class="big">🏠</div>No houses yet.<br><a href="/add" class="btn mt">Add your first</a></div>
+    <% } else { %>
+    <div class="house-grid">
+    <% houses.forEach(function(h){ %>
+      <a href="/houses/<%= h.id %>" style="color:inherit">
+        <article class="house">
+          <div class="thumb"<%= h.thumb ? ' style="background-image:url(\'' + h.thumb + '\')"' : '' %>></div>
+          <div>
+            <h3><%= h.title %></h3>
+            <div class="meta">
+              <% if (h.surface_m2) { %><span><%= h.surface_m2 %> m²</span><span>·</span><% } %>
+              <% if (h.bedrooms) { %><span><%= h.bedrooms %> ch</span><span>·</span><% } %>
+              <span><%= h.address || 'No address' %></span>
+            </div>
+            <div class="tags">
+              <% if (h.upcoming) { %><span class="tag accent">Visit <%= h.upcoming.slice(5,16) %></span><% } %>
+              <span class="tag"><%= h.status %></span>
+              <% if (h.source_site) { %><span class="tag"><%= h.source_site %></span><% } %>
+            </div>
+          </div>
+          <div class="score <%= scoreClass(h.score) %>"><%= scoreLabel(h.score) %></div>
+        </article>
+      </a>
+    <% }) %>
+    </div>
+    <% } %>
+  </main>
+
+  <a href="/add" class="fab" title="Add house">+</a>
+  <%- include('partials/nav', { active: 'list' }) %>
+<%- include('partials/foot') %>
