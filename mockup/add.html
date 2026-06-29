@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Add house — Housearch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="appbar">
+    <a href="list.html" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1>Add house</h1>
+  </header>
+
+  <main>
+    <div class="card">
+      <label>Paste listing URL</label>
+      <input placeholder="https://www.seloger.com/annonces/...">
+      <div class="row" style="margin-top:10px">
+        <button class="btn secondary block">Paste from clipboard</button>
+        <button class="btn block">Import</button>
+      </div>
+      <div class="tags" style="margin-top:10px">
+        <span class="tag">SeLoger</span>
+        <span class="tag">LeBonCoin</span>
+        <span class="tag">Bien'ici</span>
+        <span class="tag">Logic-Immo</span>
+        <span class="tag">PAP</span>
+        <span class="tag">Jinka</span>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Or import from file</h2></div>
+    <div class="dropzone" id="dz">
+      <strong>Drop HTML/JSON saved from a listing</strong>
+      <div>Useful if the site blocks the scraper</div>
+    </div>
+
+    <div class="section-h"><h2>Or enter manually</h2></div>
+    <div class="card">
+      <label>Title</label>
+      <input placeholder="e.g. Maison de ville 4P">
+      <label>Address</label>
+      <input placeholder="Street, postcode, city">
+      <div class="row">
+        <div style="flex:1"><label>Price (€)</label><input type="number" placeholder="389000"></div>
+        <div style="flex:1"><label>Surface (m²)</label><input type="number" placeholder="120"></div>
+      </div>
+      <div class="row">
+        <div style="flex:1"><label>Rooms</label><input type="number" placeholder="5"></div>
+        <div style="flex:1"><label>Bedrooms</label><input type="number" placeholder="3"></div>
+      </div>
+      <label>Source URL (optional)</label>
+      <input placeholder="https://...">
+      <button class="btn block" style="margin-top:14px">Create house</button>
+    </div>
+  </main>
+
+  <nav class="nav">
+    <a href="list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>List</a>
+    <a href="map.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>Map</a>
+    <a href="add.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  </nav>
+
+  <script>
+    const dz = document.getElementById('dz');
+    ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
+    ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
+  </script>
+</body>
+</html>

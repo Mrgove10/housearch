@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Visit — Housearch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="appbar">
+    <a href="house.html" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1>Visit #2</h1>
+    <span class="tag accent">In progress</span>
+  </header>
+
+  <main>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600">Charming stone house 4P</div>
+          <div style="color:var(--muted);font-size:13px">12 rue des Lilas · 2026-06-29 11:00</div>
+        </div>
+        <button class="btn secondary" style="min-height:40px">End visit</button>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Photos</h2><span style="color:var(--muted);font-size:13px">6 uploaded</span></div>
+    <div class="dropzone" id="dz">
+      <strong>Drag &amp; drop images here</strong>
+      <div>or <label for="filepick" style="color:var(--accent);text-decoration:underline;cursor:pointer">browse</label> · paste from clipboard</div>
+      <input id="filepick" type="file" accept="image/*" multiple capture hidden>
+    </div>
+    <div class="photos" style="margin-top:10px">
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p1/200')"></div>
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p2/200')"></div>
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p3/200')"></div>
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p4/200')"></div>
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p5/200')"></div>
+      <div class="ph" style="background-image:url('https://picsum.photos/seed/p6/200')"></div>
+    </div>
+
+    <div class="section-h"><h2>Checklist</h2><a href="#">Switch template</a></div>
+    <div class="card">
+      <div class="checklist">
+        <div class="item">
+          <span>Cellar humidity OK?</span>
+          <div class="segmented">
+            <button>Yes</button><button class="active">No</button><button>?</button>
+          </div>
+        </div>
+        <div class="item">
+          <span>Roof &lt; 20 yrs?</span>
+          <div class="segmented">
+            <button class="active">Yes</button><button>No</button><button>?</button>
+          </div>
+        </div>
+        <div class="item">
+          <span>Boiler age</span>
+          <input style="width:120px" placeholder="years">
+        </div>
+        <div class="item">
+          <span>Neighbors quiet?</span>
+          <div class="segmented">
+            <button>Yes</button><button>No</button><button class="active">?</button>
+          </div>
+        </div>
+        <div class="item">
+          <span>Schools nearby?</span>
+          <div class="segmented">
+            <button class="active">Yes</button><button>No</button><button>?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Notes</h2></div>
+    <div class="card">
+      <textarea placeholder="Type notes as you walk through…">Kitchen needs full redo, ~15k€. Basement smells damp. Garden bigger than photos suggest.</textarea>
+    </div>
+
+    <div class="section-h"><h2>Summary &amp; finish</h2></div>
+    <div class="card">
+      <label>Overall impression</label>
+      <textarea placeholder="One-liner verdict…">Solid bones, kitchen + basement reduce score.</textarea>
+      <div class="row" style="margin-top:12px">
+        <button class="btn secondary block">Save draft</button>
+        <button class="btn block">Finish visit</button>
+      </div>
+    </div>
+  </main>
+
+  <nav class="nav">
+    <a href="list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>List</a>
+    <a href="map.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>Map</a>
+    <a href="add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  </nav>
+
+  <script>
+    const dz = document.getElementById('dz');
+    ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
+    ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Charming stone house — Housearch</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero { height: 200px; border-radius: var(--radius); background: var(--surface-2) center/cover no-repeat; margin-bottom: 14px; }
+    .price { font-size: 22px; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header class="appbar">
+    <a href="list.html" class="icon-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+    </a>
+    <h1>House</h1>
+    <button class="icon-btn"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button>
+  </header>
+
+  <main>
+    <div class="detail-grid">
+    <div>
+    <div class="hero" style="background-image:url('https://picsum.photos/seed/h1/800/400')"></div>
+
+    <div class="section-h" style="margin-top:18px"><h2>Timeline</h2><a href="#">Add event</a></div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item warn">
+          <div class="tl-date">2026-06-29 · 11:00</div>
+          <div class="tl-title">Visit #2 scheduled <a href="visit.html" style="font-weight:400;font-size:13px">· start</a></div>
+          <div class="tl-body">Bring partner. Re-check basement humidity.</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-date">2026-06-15 · 14:00</div>
+          <div class="tl-title">Visit #1 done <a href="visit.html" style="font-weight:400;font-size:13px">· open</a></div>
+          <div class="tl-body">Roof in good shape, kitchen dated. 14 photos · 3 notes</div>
+          <div class="photos">
+            <div class="ph" style="background-image:url('https://picsum.photos/seed/v1/200')"></div>
+            <div class="ph" style="background-image:url('https://picsum.photos/seed/v2/200')"></div>
+            <div class="ph" style="background-image:url('https://picsum.photos/seed/v3/200')"></div>
+          </div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-date">2026-06-06</div>
+          <div class="tl-title">Contacted owner</div>
+          <div class="tl-body">Left voicemail, called back same evening. Available weekends.</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-date">2026-06-04</div>
+          <div class="tl-title">Added from SeLoger</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Score breakdown</h2><a href="#">Edit</a></div>
+    <div class="card">
+      <div class="checklist">
+        <div class="item"><span>Quiet street</span><span class="score good">+3</span></div>
+        <div class="item"><span>Close to school</span><span class="score good">+4</span></div>
+        <div class="item"><span>South-facing garden</span><span class="score good">+2</span></div>
+        <div class="item"><span>Old electrical wiring</span><span class="score bad">−2</span></div>
+        <div class="item"><span>Bonus: cellar</span><span class="score good">+1</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:700">
+        <span>Total</span><span class="score good">+8</span>
+      </div>
+    </div>
+
+    </div><!-- /left col -->
+
+    <aside>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div>
+            <h2 style="margin:0;font-size:18px">Charming stone house 4P</h2>
+            <div style="color:var(--muted);font-size:13px;margin-top:4px">12 rue des Lilas, 44000 Nantes</div>
+          </div>
+          <div class="score good">+8</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <span class="price">389 000 €</span>
+          <a href="#" class="btn ghost" style="padding:0;font-size:13px">SeLoger ↗</a>
+        </div>
+        <dl class="kv" style="margin-top:14px">
+          <dt>Surface</dt><dd>120 m²</dd>
+          <dt>Rooms</dt><dd>5 (3 bed)</dd>
+          <dt>Year</dt><dd>1923</dd>
+          <dt>DPE</dt><dd>D</dd>
+          <dt>Lot</dt><dd>340 m²</dd>
+        </dl>
+      </div>
+
+      <div class="card">
+        <a href="visit.html" class="btn block">Plan visit</a>
+        <a href="map.html" class="btn secondary block" style="margin-top:8px">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>
+          See on map
+        </a>
+        <a href="#" class="btn secondary block" style="margin-top:8px">Add note</a>
+        <a href="#" class="btn ghost block" style="margin-top:4px">Archive</a>
+      </div>
+    </aside>
+    </div><!-- /detail-grid -->
+  </main>
+
+  <nav class="nav">
+    <a href="list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>List</a>
+    <a href="map.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>Map</a>
+    <a href="add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Settings — Housearch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="appbar">
+    <h1>Settings</h1>
+  </header>
+
+  <main>
+    <div class="section-h"><h2>Checklist template</h2><a href="#">New</a></div>
+    <div class="card">
+      <div class="checklist">
+        <div class="item"><span>Cellar humidity OK?</span><span class="tag">yes/no</span></div>
+        <div class="item"><span>Roof &lt; 20 yrs?</span><span class="tag">yes/no</span></div>
+        <div class="item"><span>Boiler age</span><span class="tag">number</span></div>
+        <div class="item"><span>Neighbors quiet?</span><span class="tag">yes/no</span></div>
+        <div class="item"><span>Schools nearby?</span><span class="tag">yes/no</span></div>
+      </div>
+      <button class="btn secondary block" style="margin-top:10px">Edit items</button>
+    </div>
+
+    <div class="section-h"><h2>Score criteria</h2><a href="#">Add</a></div>
+    <div class="card">
+      <div class="checklist">
+        <div class="item"><span>Quiet street</span><span class="tag accent">weight 3 · +</span></div>
+        <div class="item"><span>Close to school</span><span class="tag accent">weight 4 · +</span></div>
+        <div class="item"><span>South-facing garden</span><span class="tag accent">weight 2 · +</span></div>
+        <div class="item"><span>Old wiring</span><span class="tag accent">weight 2 · −</span></div>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Default map location</h2></div>
+    <div class="card">
+      <label>Center address or coordinates</label>
+      <input placeholder="Nantes, France  ·  or  47.2184, -1.5536">
+      <div class="row" style="margin-top:10px">
+        <div style="flex:1"><label>Latitude</label><input type="number" step="any" value="47.2184"></div>
+        <div style="flex:1"><label>Longitude</label><input type="number" step="any" value="-1.5536"></div>
+        <div style="flex:1"><label>Zoom</label><input type="number" min="1" max="20" value="12"></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn secondary block">Use my current location</button>
+        <button class="btn block">Save</button>
+      </div>
+    </div>
+
+    <div class="section-h"><h2>Account</h2></div>
+    <div class="card">
+      <label>Change password</label>
+      <input type="password" placeholder="New password">
+      <button class="btn block" style="margin-top:10px">Update</button>
+    </div>
+
+    <div class="section-h"><h2>Data</h2></div>
+    <div class="card">
+      <div class="row">
+        <button class="btn secondary block">Export backup</button>
+        <button class="btn secondary block">Import backup</button>
+      </div>
+      <div style="color:var(--muted);font-size:13px;margin-top:10px">12 houses · 84 photos · 156 MB</div>
+    </div>
+
+    <div style="height:24px"></div>
+    <button class="btn ghost block">Sign out</button>
+  </main>
+
+  <nav class="nav">
+    <a href="list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>List</a>
+    <a href="map.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>Map</a>
+    <a href="add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add</a>
+    <a href="settings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  </nav>
+</body>
+</html>
