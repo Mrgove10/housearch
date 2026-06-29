@@ -27,6 +27,9 @@ module.exports = {
             if (a.key === 'rooms') base.rooms = int(a.value);
             if (a.key === 'energy_rate') base.dpe = (a.value || '').toUpperCase();
           }
+          // Main carousel only — ad.images.urls (full-size listing photos)
+          const imgs = ad.images?.urls || ad.images?.urls_large;
+          if (Array.isArray(imgs) && imgs.length) base.images = imgs;
         }
       } catch {}
     }
