@@ -159,6 +159,12 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
           <% if (house.contact_email) { %><div style="margin-top:4px"><a href="mailto:<%= house.contact_email %>"><%= house.contact_email %></a></div><% } %>
         </div>
         <% } %>
+        <% if (house.description) { %>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Description</div>
+          <div style="white-space:pre-wrap;line-height:1.5"><%= house.description %></div>
+        </div>
+        <% } %>
       </div>
 
       <!-- 2. Status -->

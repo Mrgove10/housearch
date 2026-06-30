@@ -31,6 +31,7 @@
           <div>
             <h3><%= h.title %></h3>
             <div class="meta">
+              <% if (h.price) { %><span class="price"><%= Number(h.price).toLocaleString('fr-FR') %> €</span><span>·</span><% } %>
               <% if (h.surface_m2) { %><span><%= h.surface_m2 %> m²</span><span>·</span><% } %>
               <% if (h.bedrooms) { %><span><%= h.bedrooms %> ch</span><span>·</span><% } %>
               <span><%= h.address || 'No address' %></span>

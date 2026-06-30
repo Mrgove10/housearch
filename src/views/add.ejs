@@ -73,6 +73,7 @@
           <div class="full"><label>Contact name</label><input name="contact_name" value="<%= p.contact_name || '' %>" placeholder="Agent / owner name"></div>
           <div><label>Contact phone</label><input type="tel" name="contact_phone" value="<%= p.contact_phone || '' %>" placeholder="06 12 34 56 78"></div>
           <div><label>Contact email</label><input type="email" name="contact_email" value="<%= p.contact_email || '' %>" placeholder="agent@agency.fr"></div>
+          <div class="full"><label>Description</label><textarea name="description" rows="6" placeholder="Original listing description"><%= p.description || '' %></textarea></div>
           <input type="hidden" name="source_site" value="<%= p.source_site || '' %>">
           <% if (p.raw_json) { %><input type="hidden" name="raw_json" value="<%= p.raw_json %>"><% } %>
           <% if (!isEdit && p.images && p.images.length) { %>

@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS house (
   year_built  INTEGER,
   dpe         TEXT,
   lot_m2      REAL,
+  description TEXT,
   raw_json    TEXT,
   created_at  TEXT NOT NULL DEFAULT (datetime('now')),
   archived    INTEGER NOT NULL DEFAULT 0,

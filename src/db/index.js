@@ -21,6 +21,7 @@ db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
   if (!cols.includes('contact_name')) db.exec('ALTER TABLE house ADD COLUMN contact_name TEXT');
   if (!cols.includes('contact_phone')) db.exec('ALTER TABLE house ADD COLUMN contact_phone TEXT');
   if (!cols.includes('contact_email')) db.exec('ALTER TABLE house ADD COLUMN contact_email TEXT');
+  if (!cols.includes('description')) db.exec('ALTER TABLE house ADD COLUMN description TEXT');
 }
 
 function getSetting(key, fallback = null) {

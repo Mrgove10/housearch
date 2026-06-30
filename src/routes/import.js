@@ -16,12 +16,12 @@ async function createHouse(d) {
     if (g) { lat = g.lat; lng = g.lng; }
   }
   const info = db.prepare(
-    `INSERT INTO house (title, source_url, source_site, address, lat, lng, price, surface_m2, rooms, bedrooms, year_built, dpe, lot_m2, raw_json)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    `INSERT INTO house (title, source_url, source_site, address, lat, lng, price, surface_m2, rooms, bedrooms, year_built, dpe, lot_m2, description, raw_json)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).run(
     d.title || 'Imported house', d.source_url || null, d.source_site || null, d.address || null,
     lat ?? null, lng ?? null, d.price ?? null, d.surface_m2 ?? null, d.rooms ?? null, d.bedrooms ?? null,
-    d.year_built ?? null, d.dpe || null, d.lot_m2 ?? null, d.raw_json || JSON.stringify(d)
+    d.year_built ?? null, d.dpe || null, d.lot_m2 ?? null, d.description || null, d.raw_json || JSON.stringify(d)
   );
   const id = info.lastInsertRowid;
   log('[import]', `created house ${id}: "${d.title || 'Imported house'}"`);
