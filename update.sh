@@ -21,7 +21,7 @@ else
   npm install --omit=dev
 fi
 
-if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q "^${SERVICE_NAME}.service"; then
+if command -v systemctl >/dev/null 2>&1 && [ -f "/etc/systemd/system/${SERVICE_NAME}.service" ]; then
   SUDO=""
   if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; fi
   echo "==> Restarting service"
