@@ -8,13 +8,12 @@
       <input name="q" value="<%= q %>" placeholder="Search address, title...">
     </form>
 
-    <div class="row" style="margin-bottom:14px;align-items:center">
+    <div class="tags" style="margin-bottom:14px">
       <a class="btn <%= filter==='all'?'':'secondary' %>" href="/houses">All <%= counts.all %></a>
-      <a class="btn <%= filter==='visited'?'':'secondary' %>" href="/houses?filter=visited">Visited <%= counts.visited %></a>
-      <a class="btn <%= filter==='offered'?'':'secondary' %>" href="/houses?filter=offered">Offered <%= counts.offered %></a>
-      <a class="btn ghost" href="/houses?filter=archived" title="Archived" style="flex:0 0 auto;<%= filter==='archived'?'color:var(--accent);font-weight:700':'' %>">
-        🗄 <%= counts.archived %>
-      </a>
+      <% Object.entries(statuses).forEach(function([k,v]){ %>
+      <a class="btn <%= filter===k?'':'secondary' %>" href="/houses?filter=<%= k %>"><%= v %> <%= counts[k] %></a>
+      <% }) %>
+      <a class="btn <%= filter==='archived'?'':'secondary' %>" href="/houses?filter=archived">Archived <%= counts.archived %></a>
     </div>
 
     <% if (!houses.length) { %>

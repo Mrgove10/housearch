@@ -32,9 +32,10 @@ function firstPhoto(houseId) {
 router.get('/houses', (req, res) => {
   const q = (req.query.q || '').trim();
   const filter = req.query.filter || 'all';
-  const archived = filter === 'archived' ? 1 : 0;
-  let sql = 'SELECT * FROM house WHERE archived = ?';
-  const args = [archived];
+  let sql, args = [];
+  if (filter === 'archived') sql = 'SELECT * FROM house WHERE archived = 1';
+  else if (STATUSES[filter]) { sql = 'SELECT * FROM house WHERE archived = 0 AND status = ?'; args.push(filter); }
+  else sql = 'SELECT * FROM house WHERE archived = 0';
   if (q) { sql += ' AND (title LIKE ? OR address LIKE ?)'; args.push('%' + q + '%', '%' + q + '%'); }
   sql += ' ORDER BY created_at DESC';
   let houses = db.prepare(sql).all(...args);
@@ -53,17 +54,15 @@ router.get('/houses', (req, res) => {
     };
   });
 
-  const counts = {
-    all: db.prepare('SELECT COUNT(*) c FROM house WHERE archived = 0').get().c,
-    visited: houses.filter((h) => db.prepare("SELECT 1 FROM visit WHERE house_id=? AND done_at IS NOT NULL LIMIT 1").get(h.id)).length,
-    offered: houses.filter((h) => db.prepare("SELECT 1 FROM timeline_event WHERE house_id=? AND type IN ('offer','counter_offer','accepted') LIMIT 1").get(h.id)).length,
-    archived: db.prepare('SELECT COUNT(*) c FROM house WHERE archived = 1').get().c,
-  };
+  // Counts per status (active) mirror the house dropdown enum, plus archived.
+  const byStatus = new Map(
+    db.prepare("SELECT status, COUNT(*) c FROM house WHERE archived = 0 GROUP BY status").all().map((r) => [r.status, r.c])
+  );
+  const counts = { all: db.prepare('SELECT COUNT(*) c FROM house WHERE archived = 0').get().c };
+  Object.keys(STATUSES).forEach((k) => { counts[k] = byStatus.get(k) || 0; });
+  counts.archived = db.prepare('SELECT COUNT(*) c FROM house WHERE archived = 1').get().c;
 
-  if (filter === 'visited') houses = houses.filter((h) => db.prepare("SELECT 1 FROM visit WHERE house_id=? AND done_at IS NOT NULL LIMIT 1").get(h.id));
-  if (filter === 'offered') houses = houses.filter((h) => db.prepare("SELECT 1 FROM timeline_event WHERE house_id=? AND type IN ('offer','counter_offer','accepted') LIMIT 1").get(h.id));
-
-  res.render('list', { title: 'Houses', active: 'list', houses, q, filter, counts });
+  res.render('list', { title: 'Houses', active: 'list', houses, q, filter, counts, statuses: STATUSES });
 });
 
 // ---- New / manual add page ----
