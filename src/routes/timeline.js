@@ -11,15 +11,23 @@ const EVENT_LABELS = {
   refused: 'Refused', accepted: 'Accepted', archived: 'Archived', note: 'Note', status: 'Status',
 };
 
-// Global timeline: every event across all houses, newest first.
+// Global timeline: every event across all houses, newest first. Visit notes
+// (note table rows tied to a visit) are folded in and labelled distinctly.
 router.get('/timeline', (req, res) => {
-  const rows = db.prepare(`
-    SELECT e.*, h.title AS house_title
+  const events = db.prepare(`
+    SELECT e.id, e.type, e.occurred_at, e.note, e.visit_id, e.house_id, h.title AS house_title
     FROM timeline_event e JOIN house h ON h.id = e.house_id
-    ORDER BY e.occurred_at DESC, e.id DESC
-  `).all();
-  const events = rows.map((e) => ({ ...e, label: EVENT_LABELS[e.type] || e.type }));
-  res.render('timeline', { title: 'Timeline', active: 'timeline', events });
+  `).all().map((e) => ({ ...e, label: EVENT_LABELS[e.type] || e.type }));
+
+  const visitNotes = db.prepare(`
+    SELECT n.id, n.body AS note, n.created_at AS occurred_at, n.visit_id, n.house_id, h.title AS house_title
+    FROM note n JOIN house h ON h.id = n.house_id
+    WHERE n.visit_id IS NOT NULL
+  `).all().map((n) => ({ ...n, type: 'note', label: 'Note (during visit)' }));
+
+  const all = [...events, ...visitNotes]
+    .sort((a, b) => String(b.occurred_at).localeCompare(String(a.occurred_at)) || (b.id - a.id));
+  res.render('timeline', { title: 'Timeline', active: 'timeline', events: all });
 });
 
 // Add timeline event

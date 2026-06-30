@@ -121,7 +121,8 @@ router.get('/houses/:id', (req, res) => {
     const counts = e.visit_id
       ? db.prepare('SELECT (SELECT COUNT(*) FROM photo WHERE visit_id=v.id) np, (SELECT COUNT(*) FROM note WHERE visit_id=v.id) nn FROM visit v WHERE v.id=?').get(e.visit_id)
       : null;
-    return { ...e, label: EVENT_LABELS[e.type] || e.type, photos, counts };
+    const label = e.type === 'note' && e.visit_id ? 'Note (during visit)' : (EVENT_LABELS[e.type] || e.type);
+    return { ...e, label, photos, counts };
   });
 
   const scoreItems = db.prepare('SELECT * FROM score_template_item ORDER BY sort, id').all();

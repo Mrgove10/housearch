@@ -26,6 +26,7 @@ router.get('/api/houses.geojson', (req, res) => {
       properties: {
         id: h.id, title: h.title, address: h.address, price: h.price,
         surface: h.surface_m2, score: sc, muted, precise: h.geo_precise === 1,
+        cat: h.archived ? 'archived' : h.status,
         thumb: photo ? '/photos/' + photo.path : null,
       },
     };

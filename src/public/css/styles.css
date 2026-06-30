@@ -248,11 +248,12 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 .map-wrap { position: relative; }
 .map-canvas { height: calc(100vh - 64px - 84px); background: var(--surface-2); }
 @media (min-width: 900px) { .map-canvas { height: calc(100vh - 72px); } }
-.maplibregl-popup-content { border-radius: var(--radius); padding: 0; box-shadow: var(--shadow); }
+/* Let the inner .drawer be the only card -- strip maplibre's own popup chrome. */
+.maplibregl-popup-content { background: transparent; border-radius: 0; padding: 0; box-shadow: none; max-width: none; }
+.maplibregl-popup { max-width: none !important; }
+.maplibregl-popup-tip { display: none; }
 .pin {
-  color: var(--accent); font-weight: 800; font-size: 15px;
-  cursor: pointer; white-space: nowrap; line-height: 1;
-  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff;
+  color: var(--cat, var(--accent)); cursor: pointer; line-height: 1;
 }
 /* Location certainty banner on the house page. */
 .geo-badge {
@@ -264,8 +265,6 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 .geo-badge.ok   { color: var(--good); background: color-mix(in srgb, var(--good) 12%, var(--surface)); }
 .geo-badge.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--surface)); }
 
-.pin.good { color: var(--good); }
-.pin.bad  { color: var(--bad); }
 /* Location certainty markers (no label): dot = exact, triangle = approximate. */
 .pin.dot {
   width: 14px; height: 14px; border-radius: 999px;

@@ -37,9 +37,10 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
       geo.features.forEach(f => {
         const p = f.properties;
         const el = document.createElement('div');
-        // Shape encodes location certainty: dot = exact, triangle = approximate.
+        // Shape = location certainty (dot exact / triangle approximate);
+        // color = status category, same palette as the list.
         const shape = p.precise ? 'dot' : 'tri';
-        el.className = 'pin ' + shape + (p.muted ? ' muted' : ' ' + pinClass(p.score));
+        el.className = 'pin ' + shape + ' st-' + (p.cat || 'idea');
         const scoreHtml = p.muted ? '' :
           '<div class="score ' + pinClass(p.score) + '">' + pinLabel(p.score) + '</div>';
         const html =
