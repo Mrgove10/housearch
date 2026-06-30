@@ -168,9 +168,14 @@ router.post('/houses/:id', async (req, res) => {
 // ---- Status ----
 router.post('/houses/:id/status', (req, res) => {
   let { status, decline_reason } = req.body;
+  if (status === 'archived') {
+    db.prepare('UPDATE house SET archived = 1 WHERE id = ?').run(req.params.id);
+    db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at) VALUES (?,?,datetime('now'))").run(req.params.id, 'archived');
+    return res.redirect('/houses/' + req.params.id);
+  }
   if (!STATUSES[status]) status = 'idea';
   const reason = status === 'declined' ? (decline_reason || null) : null;
-  db.prepare('UPDATE house SET status=?, decline_reason=? WHERE id=?').run(status, reason, req.params.id);
+  db.prepare('UPDATE house SET status=?, decline_reason=?, archived=0 WHERE id=?').run(status, reason, req.params.id);
   res.redirect('/houses/' + req.params.id);
 });
 
