@@ -124,7 +124,7 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
       <% } %>
       <% if (photos.length) { %>
       <div class="photos mt">
-        <% photos.forEach(function(ph){ %><a class="ph" href="/photos/<%= ph.path %>" target="_blank" style="background-image:url('/photos/<%= ph.path %>')"></a><% }) %>
+        <% photos.forEach(function(ph){ %><a class="ph" data-photo-id="<%= ph.id %>" href="/photos/<%= ph.path %>" target="_blank" style="background-image:url('/photos/<%= ph.path %>')"></a><% }) %>
       </div>
       <% } %>
 

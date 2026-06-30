@@ -342,7 +342,9 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 .lightbox img {
   max-width: 92vw; max-height: 86vh; border-radius: 10px;
   box-shadow: 0 10px 40px rgba(0,0,0,.5); user-select: none; -webkit-user-drag: none;
+  cursor: zoom-in; transition: transform .2s; transform-origin: center;
 }
+.lightbox img.zoomed { transform: scale(2.2); cursor: zoom-out; border-radius: 0; }
 .lb-btn {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 52px; height: 52px; border-radius: 50%;
@@ -354,6 +356,8 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 .lb-prev { left: 16px; }
 .lb-next { right: 16px; }
 .lb-close { top: 16px; right: 16px; transform: none; width: 44px; height: 44px; font-size: 22px; }
+.lb-del { top: 16px; left: 16px; transform: none; width: 44px; height: 44px; font-size: 20px; }
+.lb-del:hover { background: rgba(220,38,38,.55); }
 .lb-count {
   position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
   color: #fff; font-size: 13px; font-weight: 600;

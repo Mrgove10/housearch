@@ -5,11 +5,13 @@
 (function () {
   let box, imgEl, countEl, items = [], idx = 0;
 
+  let delEl;
   function build() {
     box = document.createElement('div');
     box.className = 'lightbox';
     box.innerHTML =
       '<button class="lb-btn lb-close" aria-label="Close">✕</button>' +
+      '<button class="lb-btn lb-del" aria-label="Delete">🗑</button>' +
       '<button class="lb-btn lb-prev" aria-label="Previous">‹</button>' +
       '<img alt="">' +
       '<button class="lb-btn lb-next" aria-label="Next">›</button>' +
@@ -17,9 +19,13 @@
     document.body.appendChild(box);
     imgEl = box.querySelector('img');
     countEl = box.querySelector('.lb-count');
+    delEl = box.querySelector('.lb-del');
     box.querySelector('.lb-close').addEventListener('click', close);
     box.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
     box.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+    delEl.addEventListener('click', (e) => { e.stopPropagation(); del(); });
+    // Click image to zoom further; click again to reset.
+    imgEl.addEventListener('click', (e) => { e.stopPropagation(); imgEl.classList.toggle('zoomed'); });
     box.addEventListener('click', (e) => { if (e.target === box) close(); });
     // swipe
     let sx = 0;
@@ -31,13 +37,30 @@
   }
 
   function show() {
-    imgEl.src = items[idx];
+    imgEl.classList.remove('zoomed');
+    imgEl.src = items[idx].url;
+    delEl.style.display = items[idx].id ? '' : 'none';
     countEl.textContent = (idx + 1) + ' / ' + items.length;
     countEl.style.display = items.length > 1 ? '' : 'none';
     box.querySelector('.lb-prev').style.display = items.length > 1 ? '' : 'none';
     box.querySelector('.lb-next').style.display = items.length > 1 ? '' : 'none';
   }
   function step(d) { idx = (idx + d + items.length) % items.length; show(); }
+  function del() {
+    const cur = items[idx];
+    if (!cur.id || !confirm('Delete this photo?')) return;
+    fetch('/api/photos/' + cur.id + '/delete', { method: 'POST', headers: { Accept: 'application/json' } })
+      .then((r) => r.json())
+      .then(() => {
+        // drop the matching thumbnail from the page, then advance the carousel
+        document.querySelectorAll('a.ph[data-photo-id="' + cur.id + '"], a[href="' + cur.url + '"]').forEach((el) => el.remove());
+        items.splice(idx, 1);
+        if (!items.length) return close();
+        if (idx >= items.length) idx = items.length - 1;
+        show();
+      })
+      .catch(() => {});
+  }
   function open(list, start) {
     if (!box) build();
     items = list; idx = start;
@@ -56,11 +79,11 @@
     if (!a || !a.getAttribute('href')) return;
     const gallery = a.closest('.photos') || document;
     const links = [...gallery.querySelectorAll('a.ph, a[href^="/photos/"]')];
-    const urls = links.map((l) => l.getAttribute('href'));
+    const list = links.map((l) => ({ url: l.getAttribute('href'), id: l.dataset.photoId || null }));
     const start = Math.max(0, links.indexOf(a));
-    if (!urls.length) return;
+    if (!list.length) return;
     e.preventDefault();
-    open(urls, start);
+    open(list, start);
   });
 
   document.addEventListener('keydown', (e) => {
