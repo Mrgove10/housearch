@@ -254,8 +254,29 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
   cursor: pointer; white-space: nowrap; line-height: 1;
   text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff;
 }
+/* Location certainty banner on the house page. */
+.geo-badge {
+  display: flex; align-items: center; gap: 6px;
+  margin: 6px 0; padding: 7px 10px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; line-height: 1.3;
+}
+.geo-badge svg { flex: 0 0 auto; }
+.geo-badge.ok   { color: var(--good); background: color-mix(in srgb, var(--good) 12%, var(--surface)); }
+.geo-badge.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--surface)); }
+
 .pin.good { color: var(--good); }
 .pin.bad  { color: var(--bad); }
+/* Location certainty markers (no label): dot = exact, triangle = approximate. */
+.pin.dot {
+  width: 14px; height: 14px; border-radius: 999px;
+  background: currentColor; border: 2px solid #fff; box-shadow: 0 0 2px rgba(0,0,0,.45);
+}
+.pin.tri {
+  width: 0; height: 0; background: none;
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-bottom: 14px solid currentColor;
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 1px 1px rgba(0,0,0,.45));
+}
 
 /* Status category colors (shared by list cards + filter buttons) */
 .st-idea      { --cat: #6b7280; }

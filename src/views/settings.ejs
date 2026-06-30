@@ -3,6 +3,7 @@
 
   <main>
     <% if (flash) { %><div class="flash ok"><%= flash %></div><% } %>
+    <% if (error) { %><div class="flash err"><%= error %></div><% } %>
 
     <!-- Checklist templates -->
     <div id="checklist" class="section-h"><h2>Checklist templates</h2></div>
@@ -57,9 +58,15 @@
     </div>
 
     <!-- Data -->
-    <div class="section-h"><h2>Data</h2></div>
+    <div id="data" class="section-h"><h2>Data</h2></div>
     <div class="card">
-      <a href="/settings/export" class="btn secondary block">Export backup (.sqlite)</a>
+      <a href="/settings/export" class="btn secondary block">Export backup (.zip)</a>
+      <form method="post" action="/settings/import" enctype="multipart/form-data" class="mt"
+            onsubmit="return confirm('Importing replaces ALL current houses, visits, photos and settings with the backup contents. Continue?')">
+        <label>Restore backup (.zip)</label>
+        <input type="file" name="backup" accept=".zip,application/zip" required>
+        <button class="btn block mt">Import backup</button>
+      </form>
       <div class="muted" style="font-size:13px;margin-top:10px"><%= stats.houses %> houses · <%= stats.archived %> archived · <%= stats.photos %> photos</div>
     </div>
 

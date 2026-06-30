@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS house (
   created_at  TEXT NOT NULL DEFAULT (datetime('now')),
   archived    INTEGER NOT NULL DEFAULT 0,
   status         TEXT NOT NULL DEFAULT 'idea',
-  decline_reason TEXT
+  decline_reason TEXT,
+  geo_precise    INTEGER NOT NULL DEFAULT 0  -- 1 = exact (manual pin/edit), 0 = approximate (scraped/geocoded)
 );
 
 CREATE TABLE IF NOT EXISTS house_field (

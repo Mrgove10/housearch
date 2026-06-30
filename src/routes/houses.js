@@ -158,15 +158,16 @@ router.post('/houses/:id', async (req, res) => {
   const b = req.body;
   let lat = b.lat ? parseFloat(b.lat) : house.lat;
   let lng = b.lng ? parseFloat(b.lng) : house.lng;
+  let precise = b.lat ? 1 : house.geo_precise; // manual coords are exact
   if (b.address && b.address !== house.address && !b.lat) {
     const g = await geocode(b.address);
-    if (g) { lat = g.lat; lng = g.lng; }
+    if (g) { lat = g.lat; lng = g.lng; precise = g.precise ? 1 : 0; }
   }
   db.prepare(
-    `UPDATE house SET title=?, source_url=?, source_site=?, address=?, lat=?, lng=?, price=?, surface_m2=?, rooms=?, bedrooms=?, year_built=?, dpe=?, lot_m2=? WHERE id=?`
+    `UPDATE house SET title=?, source_url=?, source_site=?, address=?, lat=?, lng=?, geo_precise=?, price=?, surface_m2=?, rooms=?, bedrooms=?, year_built=?, dpe=?, lot_m2=? WHERE id=?`
   ).run(
     b.title || house.title, b.source_url || null, b.source_site || house.source_site, b.address || null,
-    lat, lng, b.price || null, b.surface_m2 || null, b.rooms || null, b.bedrooms || null,
+    lat, lng, precise, b.price || null, b.surface_m2 || null, b.rooms || null, b.bedrooms || null,
     b.year_built || null, b.dpe || null, b.lot_m2 || null, house.id
   );
   res.redirect('/houses/' + house.id);
@@ -196,7 +197,7 @@ router.post('/houses/:id/status', (req, res) => {
 router.post('/houses/:id/position', (req, res) => {
   const lat = parseFloat(req.body.lat), lng = parseFloat(req.body.lng);
   if (isNaN(lat) || isNaN(lng)) return res.status(400).json({ error: 'bad coords' });
-  db.prepare('UPDATE house SET lat=?, lng=? WHERE id=?').run(lat, lng, req.params.id);
+  db.prepare('UPDATE house SET lat=?, lng=?, geo_precise=1 WHERE id=?').run(lat, lng, req.params.id);
   res.json({ ok: true, lat, lng });
 });
 

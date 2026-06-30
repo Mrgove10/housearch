@@ -9,6 +9,8 @@ const { log } = require('../lib/log');
 // Insert a normalized house object + 'added' event. Returns new id.
 async function createHouse(d) {
   let lat = d.lat, lng = d.lng;
+  // Scraped/geocoded coords are approximate (geo_precise defaults to 0); only a
+  // manual edit on the house page or a map click marks a location exact.
   if ((lat == null || lng == null) && d.address) {
     const g = await geocode(d.address);
     if (g) { lat = g.lat; lng = g.lng; }

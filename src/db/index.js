@@ -17,6 +17,7 @@ db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
   const cols = db.prepare('PRAGMA table_info(house)').all().map((c) => c.name);
   if (!cols.includes('status')) db.exec("ALTER TABLE house ADD COLUMN status TEXT NOT NULL DEFAULT 'idea'");
   if (!cols.includes('decline_reason')) db.exec('ALTER TABLE house ADD COLUMN decline_reason TEXT');
+  if (!cols.includes('geo_precise')) db.exec('ALTER TABLE house ADD COLUMN geo_precise INTEGER NOT NULL DEFAULT 0');
 }
 
 function getSetting(key, fallback = null) {
@@ -83,4 +84,40 @@ function seedDefaults() {
 }
 seedDefaults();
 
-module.exports = { db, getSetting, setSetting, DATA_DIR };
+// Replace all data in the live db with the contents of another sqlite file.
+// Done via ATTACH + per-table copy so the open `db` handle (captured by every
+// route module) stays valid -- no process restart needed. Only columns common
+// to both schemas are copied, so older/newer backups still import.
+function importFromFile(srcPath) {
+  const esc = srcPath.replace(/'/g, "''");
+  db.exec('PRAGMA foreign_keys=OFF');
+  db.exec(`ATTACH DATABASE '${esc}' AS imp`);
+  try {
+    const tables = db
+      .prepare("SELECT name FROM imp.sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
+      .all()
+      .map((r) => r.name);
+    db.exec('BEGIN');
+    try {
+      for (const t of tables) {
+        const inMain = db.prepare("SELECT 1 FROM main.sqlite_master WHERE type='table' AND name=?").get(t);
+        if (!inMain) continue;
+        const mainCols = db.prepare(`PRAGMA main.table_info("${t}")`).all().map((c) => c.name);
+        const impCols = db.prepare(`PRAGMA imp.table_info("${t}")`).all().map((c) => c.name);
+        const cols = mainCols.filter((c) => impCols.includes(c)).map((c) => `"${c}"`).join(',');
+        if (!cols) continue;
+        db.exec(`DELETE FROM main."${t}"`);
+        db.exec(`INSERT INTO main."${t}" (${cols}) SELECT ${cols} FROM imp."${t}"`);
+      }
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
+  } finally {
+    db.exec('DETACH DATABASE imp');
+    db.exec('PRAGMA foreign_keys=ON');
+  }
+}
+
+module.exports = { db, getSetting, setSetting, DATA_DIR, importFromFile };

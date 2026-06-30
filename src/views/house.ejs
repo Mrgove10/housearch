@@ -20,7 +20,7 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
     </div>
   <% } %>
   <% if (readonly) { %>
-    <div class="flash err">Declined — read-only.<% if (house.decline_reason) { %> Reason: <%= house.decline_reason %><% } %> Change status below to edit again.</div>
+    <div class="flash err">Declined — read-only.<% if (house.decline_reason) { %> Reason: <%= house.decline_reason %><% } %></div>
   <% } %>
   <div class="detail-grid">
     <div><!-- left col -->
@@ -170,6 +170,17 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
       <div class="card">
         <% if (!readonly || (house.lat && house.lng)) { %>
         <label>Position <% if (!readonly) { %><span class="muted" style="font-weight:400">— click map to set</span><% } %></label>
+        <% if (house.lat && house.lng) { %>
+        <div class="geo-badge <%= house.geo_precise ? 'ok' : 'warn' %>">
+          <% if (house.geo_precise) { %>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+            Exact location
+          <% } else { %>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            Approximate location<% if (!readonly) { %> — click the map to set the exact spot<% } %>
+          <% } %>
+        </div>
+        <% } %>
         <div id="pos-map" data-house-id="<%= house.id %>" data-lat="<%= house.lat || '' %>" data-lng="<%= house.lng || '' %>" data-readonly="<%= readonly ? '1' : '' %>" style="height:180px;border-radius:12px;overflow:hidden;margin:6px 0"></div>
         <% } %>
         <% if (house.lat && house.lng) { %>
