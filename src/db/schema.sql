@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS house (
   lot_m2      REAL,
   raw_json    TEXT,
   created_at  TEXT NOT NULL DEFAULT (datetime('now')),
-  archived    INTEGER NOT NULL DEFAULT 0
+  archived    INTEGER NOT NULL DEFAULT 0,
+  status         TEXT NOT NULL DEFAULT 'idea',
+  decline_reason TEXT
 );
 
 CREATE TABLE IF NOT EXISTS house_field (

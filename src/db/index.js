@@ -12,6 +12,13 @@ fs.mkdirSync(path.join(DATA_DIR, 'photos'), { recursive: true });
 const db = new DatabaseSync(DB_PATH);
 db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
 
+// Migrate existing DBs (CREATE TABLE IF NOT EXISTS won't add new columns).
+{
+  const cols = db.prepare('PRAGMA table_info(house)').all().map((c) => c.name);
+  if (!cols.includes('status')) db.exec("ALTER TABLE house ADD COLUMN status TEXT NOT NULL DEFAULT 'idea'");
+  if (!cols.includes('decline_reason')) db.exec('ALTER TABLE house ADD COLUMN decline_reason TEXT');
+}
+
 function getSetting(key, fallback = null) {
   const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key);
   return row ? row.value : fallback;
