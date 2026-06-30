@@ -151,6 +151,14 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
           <% if (house.dpe) { %><dt>DPE</dt><dd><%= house.dpe %></dd><% } %>
           <% if (house.lot_m2) { %><dt>Lot</dt><dd><%= house.lot_m2 %> m²</dd><% } %>
         </dl>
+        <% if (house.contact_name || house.contact_phone || house.contact_email) { %>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+          <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Contact</div>
+          <% if (house.contact_name) { %><div style="font-weight:600"><%= house.contact_name %></div><% } %>
+          <% if (house.contact_phone) { %><div style="margin-top:4px"><a href="tel:<%= house.contact_phone.replace(/\s/g,'') %>"><%= house.contact_phone %></a></div><% } %>
+          <% if (house.contact_email) { %><div style="margin-top:4px"><a href="mailto:<%= house.contact_email %>"><%= house.contact_email %></a></div><% } %>
+        </div>
+        <% } %>
       </div>
 
       <!-- 2. Status -->

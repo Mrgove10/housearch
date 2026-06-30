@@ -27,7 +27,10 @@ CREATE TABLE IF NOT EXISTS house (
   archived    INTEGER NOT NULL DEFAULT 0,
   status         TEXT NOT NULL DEFAULT 'idea',
   decline_reason TEXT,
-  geo_precise    INTEGER NOT NULL DEFAULT 0  -- 1 = exact (manual pin/edit), 0 = approximate (scraped/geocoded)
+  geo_precise    INTEGER NOT NULL DEFAULT 0,  -- 1 = exact (manual pin/edit), 0 = approximate (scraped/geocoded)
+  contact_name   TEXT,
+  contact_phone  TEXT,
+  contact_email  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS house_field (

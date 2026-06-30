@@ -82,12 +82,13 @@ router.post('/houses', async (req, res) => {
     if (g) { lat = g.lat; lng = g.lng; }
   }
   const info = db.prepare(
-    `INSERT INTO house (title, source_url, source_site, address, lat, lng, price, surface_m2, rooms, bedrooms, year_built, dpe, lot_m2, raw_json)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    `INSERT INTO house (title, source_url, source_site, address, lat, lng, price, surface_m2, rooms, bedrooms, year_built, dpe, lot_m2, raw_json, contact_name, contact_phone, contact_email)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).run(
     b.title || 'Untitled house', b.source_url || null, b.source_site || null, b.address || null,
     lat, lng, b.price || null, b.surface_m2 || null, b.rooms || null, b.bedrooms || null,
-    b.year_built || null, b.dpe || null, b.lot_m2 || null, b.raw_json || null
+    b.year_built || null, b.dpe || null, b.lot_m2 || null, b.raw_json || null,
+    b.contact_name || null, b.contact_phone || null, b.contact_email || null
   );
   const id = info.lastInsertRowid;
   db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at, note) VALUES (?,?,datetime('now'),?)")
@@ -165,11 +166,12 @@ router.post('/houses/:id', async (req, res) => {
     if (g) { lat = g.lat; lng = g.lng; precise = g.precise ? 1 : 0; }
   }
   db.prepare(
-    `UPDATE house SET title=?, source_url=?, source_site=?, address=?, lat=?, lng=?, geo_precise=?, price=?, surface_m2=?, rooms=?, bedrooms=?, year_built=?, dpe=?, lot_m2=? WHERE id=?`
+    `UPDATE house SET title=?, source_url=?, source_site=?, address=?, lat=?, lng=?, geo_precise=?, price=?, surface_m2=?, rooms=?, bedrooms=?, year_built=?, dpe=?, lot_m2=?, contact_name=?, contact_phone=?, contact_email=? WHERE id=?`
   ).run(
     b.title || house.title, b.source_url || null, b.source_site || house.source_site, b.address || null,
     lat, lng, precise, b.price || null, b.surface_m2 || null, b.rooms || null, b.bedrooms || null,
-    b.year_built || null, b.dpe || null, b.lot_m2 || null, house.id
+    b.year_built || null, b.dpe || null, b.lot_m2 || null,
+    b.contact_name || null, b.contact_phone || null, b.contact_email || null, house.id
   );
   res.redirect('/houses/' + house.id);
 });
