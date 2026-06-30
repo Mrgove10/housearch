@@ -11,9 +11,9 @@
     <div class="tags" style="margin-bottom:14px">
       <a class="btn <%= filter==='all'?'':'secondary' %>" href="/houses">All <%= counts.all %></a>
       <% Object.entries(statuses).forEach(function([k,v]){ %>
-      <a class="btn <%= filter===k?'':'secondary' %>" href="/houses?filter=<%= k %>"><%= v %> <%= counts[k] %></a>
+      <a class="btn st-<%= k %> <%= filter===k?'':'secondary' %>" href="/houses?filter=<%= k %>"><%= v %> <%= counts[k] %></a>
       <% }) %>
-      <a class="btn <%= filter==='archived'?'':'secondary' %>" href="/houses?filter=archived">Archived <%= counts.archived %></a>
+      <a class="btn st-archived <%= filter==='archived'?'':'secondary' %>" href="/houses?filter=archived">Archived <%= counts.archived %></a>
     </div>
 
     <% if (!houses.length) { %>
@@ -26,7 +26,7 @@
     <div class="house-grid">
     <% houses.forEach(function(h){ %>
       <a href="/houses/<%= h.id %>" style="color:inherit">
-        <article class="house">
+        <article class="house st-<%= h.catKey %>">
           <div class="thumb"<%- h.thumb ? ' style="background-image:url(\'' + h.thumb + '\')"' : '' %>></div>
           <div>
             <h3><%= h.title %></h3>

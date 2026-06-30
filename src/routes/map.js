@@ -15,16 +15,17 @@ router.get('/map', (req, res) => {
 });
 
 router.get('/api/houses.geojson', (req, res) => {
-  const houses = db.prepare('SELECT * FROM house WHERE archived = 0 AND lat IS NOT NULL AND lng IS NOT NULL').all();
+  const houses = db.prepare('SELECT * FROM house WHERE lat IS NOT NULL AND lng IS NOT NULL').all();
   const features = houses.map((h) => {
-    const sc = computeScore(h.id).total;
+    const muted = h.archived === 1 || h.status === 'declined';
+    const sc = muted ? null : computeScore(h.id).total;
     const photo = db.prepare('SELECT path FROM photo WHERE house_id = ? ORDER BY id LIMIT 1').get(h.id);
     return {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [h.lng, h.lat] },
       properties: {
         id: h.id, title: h.title, address: h.address, price: h.price,
-        surface: h.surface_m2, score: sc,
+        surface: h.surface_m2, score: sc, muted,
         thumb: photo ? '/photos/' + photo.path : null,
       },
     };

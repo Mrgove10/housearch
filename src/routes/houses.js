@@ -17,6 +17,7 @@ const EVENT_LABELS = {
   accepted: 'Accepted',
   archived: 'Archived',
   note: 'Note',
+  status: 'Status',
 };
 
 const STATUSES = { idea: 'Idea', contacted: 'Contacted', visited: 'Visited', offered: 'Offered', declined: 'Declined' };
@@ -50,6 +51,7 @@ router.get('/houses', (req, res) => {
       score: sc.total,
       thumb: firstPhoto(h.id),
       status: STATUSES[h.status] || 'Idea',
+      catKey: h.archived ? 'archived' : h.status,
       upcoming: upcoming ? upcoming.scheduled_at : null,
     };
   });
@@ -106,8 +108,14 @@ router.get('/houses/:id', (req, res) => {
 
   const score = computeScore(house.id);
   const events = db.prepare('SELECT * FROM timeline_event WHERE house_id = ? ORDER BY occurred_at DESC, id DESC').all(house.id);
+  // Legacy notes (older versions stored notes separately) are folded into the timeline.
+  const legacyNotes = db.prepare('SELECT id, body, created_at, visit_id FROM note WHERE house_id = ?').all(house.id)
+    .map((n) => ({ id: 'note-' + n.id, type: 'note', occurred_at: n.created_at, note: n.body, visit_id: n.visit_id }));
+  const merged = [...events, ...legacyNotes].sort(
+    (a, b) => String(b.occurred_at || '').localeCompare(String(a.occurred_at || ''))
+  );
   // attach photos to visit events
-  const eventsRich = events.map((e) => {
+  const eventsRich = merged.map((e) => {
     let photos = [];
     if (e.visit_id) photos = db.prepare('SELECT path FROM photo WHERE visit_id = ? ORDER BY id LIMIT 6').all(e.visit_id);
     const counts = e.visit_id
@@ -124,12 +132,11 @@ router.get('/houses/:id', (req, res) => {
   const scoreCustom = db.prepare('SELECT * FROM score_custom WHERE house_id = ? ORDER BY id').all(house.id);
 
   const photos = db.prepare('SELECT * FROM photo WHERE house_id = ? ORDER BY id DESC').all(house.id);
-  const notes = db.prepare('SELECT * FROM note WHERE house_id = ? ORDER BY created_at DESC, id DESC').all(house.id);
   const visits = db.prepare('SELECT * FROM visit WHERE house_id = ? ORDER BY COALESCE(done_at, scheduled_at, created_at) DESC').all(house.id);
 
   res.render('house', {
     title: house.title || 'House', active: 'list', house, score,
-    events: eventsRich, scoreItems, scoreResp, scoreCustom, photos, notes, visits,
+    events: eventsRich, scoreItems, scoreResp, scoreCustom, photos, visits,
     eventTypes: EVENT_LABELS, hero: firstPhoto(house.id),
     statuses: STATUSES, readonly: house.status === READONLY_STATUS,
     maptilerKey: getSetting('maptiler_key', '') || process.env.MAPTILER_KEY || '',
@@ -167,14 +174,20 @@ router.post('/houses/:id', async (req, res) => {
 // ---- Status ----
 router.post('/houses/:id/status', (req, res) => {
   let { status, decline_reason } = req.body;
+  const prev = db.prepare('SELECT status, archived FROM house WHERE id = ?').get(req.params.id);
   if (status === 'archived') {
     db.prepare('UPDATE house SET archived = 1 WHERE id = ?').run(req.params.id);
-    db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at) VALUES (?,?,datetime('now'))").run(req.params.id, 'archived');
+    if (!prev || !prev.archived)
+      db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at, note) VALUES (?,?,datetime('now'),?)").run(req.params.id, 'status', 'Archived');
     return res.redirect('/houses/' + req.params.id);
   }
   if (!STATUSES[status]) status = 'idea';
   const reason = status === 'declined' ? (decline_reason || null) : null;
   db.prepare('UPDATE house SET status=?, decline_reason=?, archived=0 WHERE id=?').run(status, reason, req.params.id);
+  if (!prev || prev.status !== status || prev.archived) {
+    const note = STATUSES[status] + (reason ? ' — ' + reason : '');
+    db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at, note) VALUES (?,?,datetime('now'),?)").run(req.params.id, 'status', note);
+  }
   res.redirect('/houses/' + req.params.id);
 });
 

@@ -30,12 +30,18 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
       <div id="timeline" class="section-h" style="margin-top:18px"><h2>Timeline</h2></div>
       <div class="card">
         <% if (!readonly) { %>
+        <form method="post" action="/houses/<%= house.id %>/notes" style="margin-bottom:10px">
+          <div class="row">
+            <input name="body" placeholder="Add a note…" style="flex:1" required>
+            <button class="btn">Add note</button>
+          </div>
+        </form>
         <details style="margin-bottom:10px">
           <summary style="cursor:pointer;color:var(--accent);font-weight:600">Add event</summary>
           <form method="post" action="/houses/<%= house.id %>/events" class="mt">
             <div class="row">
               <select name="type">
-                <% Object.entries(eventTypes).forEach(function([k,v]){ if(k!=='archived'){ %><option value="<%= k %>"><%= v %></option><% }}) %>
+                <% Object.entries(eventTypes).forEach(function([k,v]){ if(k!=='archived'&&k!=='status'){ %><option value="<%= k %>"><%= v %></option><% }}) %>
               </select>
               <input type="datetime-local" name="occurred_at">
             </div>
@@ -122,22 +128,6 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
       </div>
       <% } %>
 
-      <!-- Notes -->
-      <div id="notes" class="section-h"><h2>Notes</h2></div>
-      <div class="card">
-        <% if (!readonly) { %>
-        <form method="post" action="/houses/<%= house.id %>/notes">
-          <textarea name="body" placeholder="Add a note…" style="min-height:80px"></textarea>
-          <button class="btn block mt">Add note</button>
-        </form>
-        <% } %>
-        <% notes.forEach(function(n){ %>
-          <div style="border-top:1px solid var(--border);padding:10px 0">
-            <div class="muted" style="font-size:12px"><%= n.created_at %></div>
-            <div><%= n.body %></div>
-          </div>
-        <% }) %>
-      </div>
     </div><!-- /left col -->
 
     <aside>
@@ -178,9 +168,9 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
 
       <!-- 3. Maps -->
       <div class="card">
-        <% if (!readonly) { %>
-        <label>Position <span class="muted" style="font-weight:400">— click map to set</span></label>
-        <div id="pos-map" data-house-id="<%= house.id %>" data-lat="<%= house.lat || '' %>" data-lng="<%= house.lng || '' %>" style="height:180px;border-radius:12px;overflow:hidden;margin:6px 0"></div>
+        <% if (!readonly || (house.lat && house.lng)) { %>
+        <label>Position <% if (!readonly) { %><span class="muted" style="font-weight:400">— click map to set</span><% } %></label>
+        <div id="pos-map" data-house-id="<%= house.id %>" data-lat="<%= house.lat || '' %>" data-lng="<%= house.lng || '' %>" data-readonly="<%= readonly ? '1' : '' %>" style="height:180px;border-radius:12px;overflow:hidden;margin:6px 0"></div>
         <% } %>
         <% if (house.lat && house.lng) { %>
         <a href="/map?focus=<%= house.id %>" class="btn secondary block<%= readonly ? '' : ' mt' %>">
@@ -212,7 +202,7 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
           </form>
         </details>
         <% } %>
-        <a href="#notes" class="btn secondary block mt">Add note</a>
+        <a href="#timeline" class="btn secondary block mt">Add note</a>
       </div>
 
       <% if (visits.length) { %>
@@ -232,12 +222,12 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
 
   <%- include('partials/nav', { active: 'list' }) %>
 
-  <% if (!readonly) { %>
   <script>
   (function () {
     const el = document.getElementById('pos-map');
     if (!el || typeof maplibregl === 'undefined') return;
     const houseId = el.dataset.houseId;
+    const ro = el.dataset.readonly === '1';
     const has = el.dataset.lat !== '' && el.dataset.lng !== '';
     const start = has ? [parseFloat(el.dataset.lng), parseFloat(el.dataset.lat)] : [2.4, 46.6];
     const MAPTILER = <%- JSON.stringify(maptilerKey || '') %>;
@@ -249,8 +239,9 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
     const style = MAPTILER ? 'https://api.maptiler.com/maps/streets-v2/style.json?key=' + MAPTILER : rasterStyle;
     const map = new maplibregl.Map({ container: 'pos-map', style, center: start, zoom: has ? 14 : 5 });
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
-    const marker = new maplibregl.Marker({ draggable: true });
+    const marker = new maplibregl.Marker({ draggable: !ro });
     if (has) marker.setLngLat(start).addTo(map);
+    if (ro) return; // declined: show position only, no editing
 
     function save(lngLat) {
       fetch('/houses/' + houseId + '/position', {
@@ -263,5 +254,4 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
     marker.on('dragend', () => save(marker.getLngLat()));
   })();
   </script>
-  <% } %>
 <%- include('partials/foot') %>

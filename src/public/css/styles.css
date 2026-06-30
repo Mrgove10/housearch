@@ -254,6 +254,36 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 }
 .pin.good { background: var(--good); }
 .pin.bad  { background: var(--bad); }
+
+/* Status category colors (shared by list cards + filter buttons) */
+.st-idea      { --cat: #6b7280; }
+.st-contacted { --cat: #2f6df6; }
+.st-visited   { --cat: #0ea5a4; }
+.st-offered   { --cat: #d97706; }
+.st-declined  { --cat: #dc2626; }
+.st-archived  { --cat: #9ca3af; }
+
+.house.st-idea, .house.st-contacted, .house.st-visited,
+.house.st-offered, .house.st-declined, .house.st-archived {
+  background: color-mix(in srgb, var(--cat) 8%, var(--surface));
+  border-left: 3px solid var(--cat);
+}
+
+/* Filter buttons: inactive = tint, active = solid category color */
+.btn.secondary.st-idea, .btn.secondary.st-contacted, .btn.secondary.st-visited,
+.btn.secondary.st-offered, .btn.secondary.st-declined, .btn.secondary.st-archived {
+  background: color-mix(in srgb, var(--cat) 14%, var(--surface));
+  border-color: color-mix(in srgb, var(--cat) 40%, var(--surface));
+  color: var(--text);
+}
+.btn.st-idea:not(.secondary), .btn.st-contacted:not(.secondary), .btn.st-visited:not(.secondary),
+.btn.st-offered:not(.secondary), .btn.st-declined:not(.secondary), .btn.st-archived:not(.secondary) {
+  background: var(--cat); border-color: var(--cat); color: #fff;
+}
+.pin.muted {
+  width: 12px; height: 12px; padding: 0; border-radius: 999px;
+  background: var(--muted); border: 2px solid #fff; opacity: .8;
+}
 .drawer {
   position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 5;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);

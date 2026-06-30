@@ -22,13 +22,20 @@ router.post('/events/:id/delete', (req, res) => {
   res.redirect('/houses/' + (ev ? ev.house_id : ''));
 });
 
-// Notes (append-only)
+// Notes (append-only). Visit notes stay in the note table (shown on the visit page);
+// house-level notes become timeline events so they live in the timeline only.
 router.post('/houses/:id/notes', (req, res) => {
   const house = db.prepare('SELECT id FROM house WHERE id = ?').get(req.params.id);
   if (!house) return res.status(404).json({ error: 'not found' });
   const body = (req.body.body || '').trim();
-  if (body) db.prepare('INSERT INTO note (house_id, visit_id, body) VALUES (?,?,?)').run(house.id, req.body.visit_id || null, body);
-  res.redirect('/houses/' + house.id + '#notes');
+  if (body) {
+    if (req.body.visit_id) {
+      db.prepare('INSERT INTO note (house_id, visit_id, body) VALUES (?,?,?)').run(house.id, req.body.visit_id, body);
+      return res.redirect('/visits/' + req.body.visit_id + '#notes');
+    }
+    db.prepare("INSERT INTO timeline_event (house_id, type, occurred_at, note) VALUES (?,?,datetime('now'),?)").run(house.id, 'note', body);
+  }
+  res.redirect('/houses/' + house.id + '#timeline');
 });
 
 module.exports = router;
