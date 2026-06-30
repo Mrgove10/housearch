@@ -248,12 +248,12 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 @media (min-width: 900px) { .map-canvas { height: calc(100vh - 72px); } }
 .maplibregl-popup-content { border-radius: var(--radius); padding: 0; box-shadow: var(--shadow); }
 .pin {
-  background: var(--accent); color: #fff; font-weight: 700; font-size: 13px;
-  padding: 6px 10px; border-radius: 999px; box-shadow: var(--shadow); cursor: pointer;
-  transform: translateY(-6px); white-space: nowrap;
+  color: var(--accent); font-weight: 800; font-size: 15px;
+  cursor: pointer; white-space: nowrap; line-height: 1;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff;
 }
-.pin.good { background: var(--good); }
-.pin.bad  { background: var(--bad); }
+.pin.good { color: var(--good); }
+.pin.bad  { color: var(--bad); }
 
 /* Status category colors (shared by list cards + filter buttons) */
 .st-idea      { --cat: #6b7280; }

@@ -11,7 +11,7 @@
     box.className = 'lightbox';
     box.innerHTML =
       '<button class="lb-btn lb-close" aria-label="Close">✕</button>' +
-      '<button class="lb-btn lb-del" aria-label="Delete">🗑</button>' +
+      '<button class="lb-btn lb-del" aria-label="Delete" title="Delete (D)">🗑</button>' +
       '<button class="lb-btn lb-prev" aria-label="Previous">‹</button>' +
       '<img alt="">' +
       '<button class="lb-btn lb-next" aria-label="Next">›</button>' +
@@ -91,6 +91,7 @@
     if (e.key === 'Escape') close();
     else if (e.key === 'ArrowLeft') step(-1);
     else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'd' || e.key === 'D') del();
   });
 })();
 
