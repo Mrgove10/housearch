@@ -3,6 +3,26 @@ const express = require('express');
 const { db } = require('../db');
 const router = express.Router();
 
+// Calendar of visits, grouped by month (newest month first).
+router.get('/calendar', (req, res) => {
+  const rows = db.prepare(`
+    SELECT v.id, v.scheduled_at, v.done_at, v.with_whom, h.id AS house_id, h.title AS house_title
+    FROM visit v JOIN house h ON h.id = v.house_id
+    WHERE v.scheduled_at IS NOT NULL AND v.scheduled_at <> ''
+    ORDER BY v.scheduled_at ASC
+  `).all();
+  const months = new Map();
+  for (const v of rows) {
+    const key = v.scheduled_at.slice(0, 7); // YYYY-MM
+    if (!months.has(key)) months.set(key, []);
+    months.get(key).push(v);
+  }
+  const groups = [...months.entries()]
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([key, visits]) => ({ key, visits }));
+  res.render('calendar', { title: 'Calendar', active: 'calendar', groups });
+});
+
 // Create / plan a visit
 router.post('/houses/:id/visits', (req, res) => {
   const house = db.prepare('SELECT id FROM house WHERE id = ?').get(req.params.id);

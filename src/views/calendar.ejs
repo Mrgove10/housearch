@@ -1,0 +1,38 @@
+<%- include('partials/head', { title: 'Housearch — Calendar' }) %>
+  <header class="appbar"><h1>Calendar</h1></header>
+
+  <main>
+    <% if (!groups.length) { %>
+      <div class="empty"><div class="big">📅</div>No visits scheduled.</div>
+    <% } else { %>
+    <% groups.forEach(function(g){
+         var d = new Date(g.key + '-01T00:00:00');
+         var monthLabel = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }); %>
+    <div class="section-h" style="margin-top:18px"><h2><%= monthLabel %></h2></div>
+    <div class="house-grid">
+      <% g.visits.forEach(function(v){
+           var dt = v.scheduled_at.replace('T', ' ');
+           var day = dt.slice(8,10), time = dt.slice(11,16); %>
+      <a href="/visits/<%= v.id %>" style="color:inherit">
+        <article class="house">
+          <div class="score" style="font-variant-numeric:tabular-nums"><%= day %></div>
+          <div>
+            <h3><%= v.house_title %></h3>
+            <div class="meta">
+              <span><%= dt.slice(0,16) %></span>
+              <% if (v.with_whom) { %><span>·</span><span><%= v.with_whom %></span><% } %>
+            </div>
+            <div class="tags">
+              <% if (v.done_at) { %><span class="tag">Done</span><% } else { %><span class="tag accent"><%= time %></span><% } %>
+            </div>
+          </div>
+        </article>
+      </a>
+      <% }) %>
+    </div>
+    <% }) %>
+    <% } %>
+  </main>
+
+  <%- include('partials/nav', { active: 'calendar' }) %>
+<%- include('partials/foot') %>

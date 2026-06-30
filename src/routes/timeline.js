@@ -5,6 +5,23 @@ const router = express.Router();
 
 const VALID = ['added', 'contacted', 'visit_scheduled', 'visit_done', 'offer', 'counter_offer', 'refused', 'accepted', 'archived', 'note'];
 
+const EVENT_LABELS = {
+  added: 'Added', contacted: 'Contacted owner', visit_scheduled: 'Visit scheduled',
+  visit_done: 'Visit done', offer: 'Offer made', counter_offer: 'Counter-offer',
+  refused: 'Refused', accepted: 'Accepted', archived: 'Archived', note: 'Note', status: 'Status',
+};
+
+// Global timeline: every event across all houses, newest first.
+router.get('/timeline', (req, res) => {
+  const rows = db.prepare(`
+    SELECT e.*, h.title AS house_title
+    FROM timeline_event e JOIN house h ON h.id = e.house_id
+    ORDER BY e.occurred_at DESC, e.id DESC
+  `).all();
+  const events = rows.map((e) => ({ ...e, label: EVENT_LABELS[e.type] || e.type }));
+  res.render('timeline', { title: 'Timeline', active: 'timeline', events });
+});
+
 // Add timeline event
 router.post('/houses/:id/events', (req, res) => {
   const house = db.prepare('SELECT id FROM house WHERE id = ?').get(req.params.id);

@@ -5,7 +5,13 @@
   <a href="/map"<%= active === 'map' ? ' class="active"' : '' %>>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/></svg>Map
   </a>
-  <a href="/add"<%= active === 'add' ? ' class="active"' : '' %>>
+  <a href="/timeline" class="wide-only<%= active === 'timeline' ? ' active' : '' %>">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Timeline
+  </a>
+  <a href="/calendar"<%= active === 'calendar' ? ' class="active"' : '' %>>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Calendar
+  </a>
+  <a href="/add" class="wide-only<%= active === 'add' ? ' active' : '' %>">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add
   </a>
   <a href="/settings"<%= active === 'settings' ? ' class="active"' : '' %>>

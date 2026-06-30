@@ -1,0 +1,26 @@
+<%- include('partials/head', { title: 'Housearch — Timeline' }) %>
+  <header class="appbar"><h1>Timeline</h1></header>
+
+  <main>
+    <% if (!events.length) { %>
+      <div class="empty"><div class="big">🕑</div>No events yet.</div>
+    <% } else { %>
+    <div class="timeline">
+      <% events.forEach(function(e){
+           var cls = e.type==='visit_done'||e.type==='accepted'?'done':(e.type==='visit_scheduled'||e.type==='offer'?'warn':''); %>
+      <div class="tl-item <%= cls %>">
+        <div class="tl-date"><%= e.occurred_at %></div>
+        <div class="tl-title">
+          <%= e.label %>
+          <a href="/houses/<%= e.house_id %>" style="font-weight:400;font-size:13px;color:var(--accent)">· <%= e.house_title || 'house' %></a>
+          <% if (e.visit_id) { %><a href="/visits/<%= e.visit_id %>" style="font-weight:400;font-size:13px">· open</a><% } %>
+        </div>
+        <% if (e.note) { %><div class="tl-body"><%= e.note %></div><% } %>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </main>
+
+  <%- include('partials/nav', { active: 'timeline' }) %>
+<%- include('partials/foot') %>
