@@ -147,7 +147,8 @@ router.get('/houses/:id', (req, res) => {
 router.get('/houses/:id/edit', (req, res) => {
   const house = db.prepare('SELECT * FROM house WHERE id = ?').get(req.params.id);
   if (!house) return res.status(404).render('error', { title: 'Not found', message: 'House not found', active: 'list' });
-  res.render('add', { title: 'Edit house', active: 'list', prefill: house, error: null });
+  const photos = db.prepare('SELECT * FROM photo WHERE house_id = ? ORDER BY id DESC').all(house.id);
+  res.render('add', { title: 'Edit house', active: 'list', prefill: house, error: null, photos });
 });
 
 // ---- Update ----

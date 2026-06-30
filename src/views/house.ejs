@@ -79,9 +79,9 @@ var headExtra = '<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-g
           <div class="item">
             <span><%= it.label %> <span class="muted" style="font-size:12px">(<%= it.sign>0?'+':'−' %><%= it.weight %>)</span></span>
             <% if (readonly) { %>
-              <span class="muted"><%= on?'Yes':'No' %></span>
+              <span class="muted-check"><%= on?'✓':'' %></span>
             <% } else { %>
-              <button class="toggle-btn<%= on?' on':'' %>" data-score-url="/api/houses/<%= house.id %>/score/<%= it.id %>"><%= on?'Yes':'No' %></button>
+              <button class="toggle-btn<%= on?' on':'' %>" data-score-url="/api/houses/<%= house.id %>/score/<%= it.id %>" aria-label="<%= it.label %>" title="<%= on?'Met':'Not met' %>">✓</button>
             <% } %>
           </div>
           <% }) %>

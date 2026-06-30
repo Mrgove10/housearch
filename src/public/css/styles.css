@@ -317,8 +317,18 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
 .right { text-align: right; }
 .mt { margin-top: 12px; }
 .inline-form { display: inline; }
-.toggle-btn { background: var(--surface-2); color: var(--text); min-height: 36px; padding: 0 12px; border-radius: 8px; font-weight:600; }
-.toggle-btn.on { background: var(--accent); color:#fff; }
+.toggle-btn {
+  width: 28px; height: 28px; min-height: 0; padding: 0; flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-2); color: transparent;
+  border: 2px solid var(--border); border-radius: 7px;
+  font-size: 16px; font-weight: 700; line-height: 1; cursor: pointer;
+}
+.toggle-btn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.checklist .item .muted-check {
+  width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid var(--border); border-radius: 7px; color: var(--muted); font-weight: 700;
+}
 
 /* ---------- Lightbox carousel ---------- */
 .lightbox {

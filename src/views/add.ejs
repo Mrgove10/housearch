@@ -80,6 +80,23 @@
         <button class="btn block mt"><%= isEdit ? 'Save changes' : 'Create house' %></button>
       </form>
     </div>
+
+    <% if (isEdit) { %>
+    <div class="section-h"><h2>Photos</h2><span class="muted" style="font-size:13px"><%= (typeof photos !== 'undefined' ? photos.length : 0) %> total</span></div>
+    <div class="card">
+      <div class="dropzone" data-upload-url="/api/houses/<%= p.id %>/photos" data-preview-list="#edit-upload">
+        <strong>Drag &amp; drop images here</strong>
+        <div>or <label for="epick" style="color:var(--accent);text-decoration:underline;cursor:pointer">browse</label> · paste from clipboard</div>
+        <input id="epick" type="file" accept="image/*" multiple hidden>
+      </div>
+      <div id="edit-upload" class="upload-list"></div>
+      <% if (typeof photos !== 'undefined' && photos.length) { %>
+      <div class="photos mt">
+        <% photos.forEach(function(ph){ %><a class="ph" href="/photos/<%= ph.path %>" target="_blank" style="background-image:url('/photos/<%= ph.path %>')"></a><% }) %>
+      </div>
+      <% } %>
+    </div>
+    <% } %>
   </main>
 
   <%- include('partials/nav', { active: isEdit ? 'list' : 'add' }) %>
