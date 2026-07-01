@@ -389,3 +389,13 @@ main { padding: 16px; max-width: 720px; margin: 0 auto; }
   .lb-btn { width: 44px; height: 44px; font-size: 22px; }
   .lb-prev { left: 8px; } .lb-next { right: 8px; }
 }
+
+/* ---- Message templates (ready-to-copy texts) ---- */
+.msg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.msg-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+.msg-body {
+  margin: 10px 0 0; padding: 12px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  font: inherit; white-space: pre-wrap; word-break: break-word;
+}
+.btn.ok { background: var(--good); }

@@ -49,6 +49,7 @@ app.use('/', require('./src/routes/timeline'));
 app.use('/', require('./src/routes/photos'));
 app.use('/', require('./src/routes/checklist'));
 app.use('/', require('./src/routes/score'));
+app.use('/', require('./src/routes/messages'));
 app.use('/', require('./src/routes/settings'));
 
 // Root -> list

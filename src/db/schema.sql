@@ -126,6 +126,13 @@ CREATE TABLE IF NOT EXISTS score_response (
   value            INTEGER NOT NULL DEFAULT 0 -- 0 or 1 (criterion met)
 );
 
+CREATE TABLE IF NOT EXISTS message_template (
+  id    INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL DEFAULT '',
+  body  TEXT NOT NULL DEFAULT '',
+  sort  INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS geocode_cache (
   query TEXT PRIMARY KEY,
   lat   REAL,

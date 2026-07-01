@@ -1,0 +1,54 @@
+<%- include('partials/head', { title: 'Messages — Housearch' }) %>
+  <header class="appbar"><h1>Messages</h1></header>
+
+  <main>
+    <p class="muted" style="margin-top:0">Ready-to-copy texts to paste when contacting a seller (LeBonCoin, etc.).</p>
+
+    <% if (!messages.length) { %>
+      <div class="card"><p class="muted" style="margin:0">No message yet. Add one below.</p></div>
+    <% } %>
+
+    <% messages.forEach(function(m){ %>
+      <div class="card msg-card" data-msg="<%= m.id %>">
+        <div class="msg-view">
+          <div class="msg-head">
+            <strong><%= m.title || 'Sans titre' %></strong>
+            <div class="msg-actions">
+              <button type="button" class="btn" data-copy="msg-<%= m.id %>">Copier</button>
+              <button type="button" class="btn secondary" data-edit="<%= m.id %>">Éditer</button>
+              <form method="post" action="/messages/<%= m.id %>/delete" class="inline-form" onsubmit="return confirm('Supprimer ce message ?')">
+                <button class="btn ghost" style="min-height:auto;padding:0 8px">✕</button>
+              </form>
+            </div>
+          </div>
+          <pre class="msg-body" id="msg-<%= m.id %>"><%= m.body %></pre>
+        </div>
+        <form method="post" action="/messages/<%= m.id %>" class="msg-edit" hidden>
+          <label>Title</label>
+          <input name="title" value="<%= m.title %>">
+          <label class="mt">Text</label>
+          <textarea name="body" rows="6" required><%= m.body %></textarea>
+          <div class="row mt">
+            <button class="btn" style="flex:1">Save</button>
+            <button type="button" class="btn secondary" data-cancel="<%= m.id %>" style="flex:1">Cancel</button>
+          </div>
+        </form>
+      </div>
+    <% }) %>
+
+    <div id="add" class="section-h"><h2>New message</h2></div>
+    <div class="card">
+      <form method="post" action="/messages">
+        <label>Title</label>
+        <input name="title" placeholder="e.g. First contact">
+        <label class="mt">Text</label>
+        <textarea name="body" rows="6" placeholder="Type the message to copy later" required></textarea>
+        <button class="btn block mt">Add</button>
+      </form>
+    </div>
+
+    <div style="height:24px"></div>
+  </main>
+
+  <%- include('partials/nav', { active: 'messages' }) %>
+<%- include('partials/foot') %>

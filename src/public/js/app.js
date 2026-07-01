@@ -247,3 +247,46 @@ document.querySelectorAll('.dropzone[data-visual]').forEach((dz) => {
   ['dragenter', 'dragover'].forEach((e) => dz.addEventListener(e, (ev) => { ev.preventDefault(); dz.classList.add('over'); }));
   ['dragleave', 'drop'].forEach((e) => dz.addEventListener(e, (ev) => { ev.preventDefault(); dz.classList.remove('over'); }));
 });
+
+// ---- Copy-to-clipboard buttons ([data-copy=<element id>]) ----
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('[data-copy]');
+  if (!btn) return;
+  const src = document.getElementById(btn.getAttribute('data-copy'));
+  if (!src) return;
+  const text = src.innerText;
+  const done = () => {
+    const old = btn.textContent;
+    btn.textContent = 'Copié ✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+});
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch (_) {}
+  document.body.removeChild(ta);
+}
+
+// ---- Message templates: toggle inline edit form ----
+document.addEventListener('click', function (e) {
+  const edit = e.target.closest('[data-edit]');
+  const cancel = e.target.closest('[data-cancel]');
+  const id = edit ? edit.getAttribute('data-edit') : cancel ? cancel.getAttribute('data-cancel') : null;
+  if (!id) return;
+  const card = document.querySelector('.msg-card[data-msg="' + id + '"]');
+  if (!card) return;
+  const showEdit = !!edit;
+  card.querySelector('.msg-view').hidden = showEdit;
+  card.querySelector('.msg-edit').hidden = !showEdit;
+});
